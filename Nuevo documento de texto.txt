@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Asistencia y Salario</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px; /* Añadido para espacio en móviles */
+            box-sizing: border-box; /* Para incluir padding en el ancho */
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 500px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .notification-box {
+            background-color: #e0f7fa;
+            border: 1px solid #b2ebf2;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: block; /* Ahora visible por defecto */
+        }
+        .notification-box p {
+            margin: 0;
+            color: #00796b;
+            font-weight: bold;
+        }
+        .btn-group button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .btn-group button:hover {
+            background-color: #45a049;
+        }
+        .btn-group button.late {
+            background-color: #f44336;
+        }
+        .btn-group button.late:hover {
+            background-color: #da190b;
+        }
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+            color: #333;
+            min-height: 20px; /* Para evitar saltos cuando está vacío */
+        }
+        #history {
+            margin-top: 30px;
+            text-align: left;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+        #history h2 {
+            color: #555;
+            margin-bottom: 15px;
+        }
+        #history ul {
+            list-style: none;
+            padding: 0;
+        }
+        #history ul li {
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            word-wrap: break-word; /* Para que el texto largo se ajuste */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Control de Asistencia y Salario</h1>
+
+        <div id="notification" class="notification-box">
+            <p>¡Hola! Son las <span id="current-time"></span>. ¿Estás trabajando ahora?</p>
+            <div class="btn-group">
+                <button onclick="registerEntry()">¡Sí, estoy trabajando!</button>
+            </div>
+        </div>
+
+        <div id="entry-options" class="btn-group" style="display: none;">
+            <p>¿Fichaste temprano o tarde?</p>
+            <button onclick="registerEarly()">Temprano</button>
+            <button class="late" onclick="registerLate()">Tarde</button>
+        </div>
+
+        <p id="result"></p>
+
+        <div id="history">
+            <h2>Historial de Registros</h2>
+            <ul id="history-list">
+                </ul>
+        </div>
+    </div>
+
+    <script>
+        const notificationBox = document.getElementById('notification');
+        const entryOptions = document.getElementById('entry-options');
+        const resultDisplay = document.getElementById('result');
+        const currentTimeSpan = document.getElementById('current-time');
+        const historyList = document.getElementById('history-list');
+
+        let entryTime = null; // Almacenará el objeto Date del momento de registro
+
+        // Define los salarios por turno. ¡AJUSTA ESTOS VALORES A TUS NECESIDADES!
+        const SALARIOS_POR_TURNO = {
+            manana: 100.00, // Ejemplo: $100 por turno de mañana (6:00 AM - 13:59 PM)
+            tarde: 120.00,  // Ejemplo: $120 por turno de tarde (14:00 PM - 21:59 PM)
+            noche: 150.00   // Ejemplo: $150 por turno de noche (22:00 PM - 5:59 AM del día siguiente)
+        };
+
+        // Función para actualizar la hora actual en la notificación
+        function updateCurrentTime() {
+            const now = new Date();
+            const options = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            currentTimeSpan.textContent = now.toLocaleTimeString('es-AR', options);
+        }
+
+        // Actualiza la hora cada segundo
+        setInterval(updateCurrentTime, 1000);
+
+        // Función para registrar el ingreso al trabajo
+        function registerEntry() {
+            // Guarda el momento exacto en que se hizo clic en "¡Sí, estoy trabajando!"
+            entryTime = new Date(); 
+
+            notificationBox.style.display = 'none'; // Oculta la notificación
+            entryOptions.style.display = 'block';   // Muestra las opciones de temprano/tarde
+            resultDisplay.textContent = '¡Ingreso registrado! Ahora, por favor, indica si fichaste temprano o tarde.';
+        }
+
+        // Función para registrar "Temprano"
+        function registerEarly() {
+            recordAttendance('Temprano');
+        }
+
+        // Función para registrar "Tarde"
+        function registerLate() {
+            recordAttendance('Tarde');
+        }
+
+        // Función principal para registrar asistencia y calcular salario
+        function recordAttendance(status) {
+            if (!entryTime) {
+                resultDisplay.textContent = 'Error: No se ha registrado la hora de ingreso.';
+                return;
+            }
+
+            const entryHour = entryTime.getHours();
+            let turno = '';
+            let salarioDiario = 0;
+
+            // Lógica para determinar el turno basada en la hora de ingreso
+            if (entryHour >= 6 && entryHour < 14) { // De 6 AM a 13:59 PM
+                turno = 'Mañana';
+                salarioDiario = SALARIOS_POR_TURNO.manana;
+            } else if (entryHour >= 14 && entryHour < 22) { // De 14 PM a 21:59 PM
+                turno = 'Tarde';
+                salarioDiario = SALARIOS_POR_TURNO.tarde;
+            } else { // De 22 PM a 5:59 AM del día siguiente
+                turno = 'Noche';
+                salarioDiario = SALARIOS_POR_TURNO.noche;
+            }
+
+            // Formatear la hora y fecha para el registro
+            const formattedEntryTime = entryTime.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const formattedDate = entryTime.toLocaleDateString('es-AR', { year: 'numeric', month: '2-digit', day: '2-digit' });
+
+            const recordText = `Fecha: ${formattedDate} - Ingreso: ${formattedEntryTime} - Estado: ${status} - Turno: ${turno} - Salario Diario: $${salarioDiario.toFixed(2)}`;
+            resultDisplay.textContent = `¡Registro exitoso! ${recordText}`;
+
+            addRecordToHistory(recordText);
+
+            // Reiniciar para el próximo registro
+            entryTime = null; // Limpiamos la hora de ingreso
+            entryOptions.style.display = 'none'; // Ocultamos las opciones
+            notificationBox.style.display = 'block'; // Mostramos la notificación para un nuevo registro
+        }
+
+        // Función para añadir el registro al historial
+        function addRecordToHistory(recordText) {
+            const listItem = document.createElement('li');
+            listItem.textContent = recordText;
+            historyList.prepend(listItem); // Añadir al principio para que los más nuevos aparezcan arriba
+        }
+
+        // Llama a updateCurrentTime() al cargar para mostrar la hora inicial
+        updateCurrentTime();
+    </script>
+</body>
+</html>
