@@ -578,3 +578,488 @@ button.category {
 .animated-flash {
     animation: flash 0.7s;
 }
+
+/* =================================================================
+   ESTILOS ESPECÍFICOS PARA CÁLCULO POR HORAS
+   ================================================================= */
+
+/* --- CONTENEDOR PRINCIPAL DE CÁLCULO POR HORAS --- */
+.calc-hora-container {
+    max-width: 540px;
+    margin: 48px auto;
+    padding: 40px 32px;
+    background: #f7faff;
+    border-radius: 22px;
+    box-shadow: 0 4px 32px #1976d244;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* --- TÍTULO PRINCIPAL --- */
+.calc-hora-title {
+    text-align: center;
+    color: #1976d2;
+    margin-bottom: 8px;
+    font-size: 2em;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+/* --- FORMULARIO DE CÁLCULO --- */
+.calc-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+/* --- FILAS DEL FORMULARIO --- */
+.form-row {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+}
+
+.form-label {
+    flex: 1;
+    font-weight: 500;
+    color: #1976d2;
+    min-width: 120px;
+}
+
+/* --- GRUPOS DE BOTONES --- */
+.button-group {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* --- ENTRADA MANUAL DE VALOR HORA --- */
+.manual-input-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.manual-input {
+    width: 120px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid #bcdffb;
+    background: #fff;
+    font-size: 1em;
+}
+
+.manual-btn {
+    padding: 8px 14px;
+    border-radius: 8px;
+    background: #1976d2;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.manual-btn:hover {
+    background: #1565c0;
+}
+
+.manual-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+/* --- MENSAJE DE VALOR MANUAL --- */
+.manual-message {
+    display: none;
+    position: relative;
+    text-align: center;
+    margin-top: -10px;
+    margin-bottom: 4px;
+}
+
+/* --- DISPLAY DE VALOR HORA --- */
+.valor-hora-display {
+    font-weight: bold;
+    color: #1976d2;
+    font-size: 1.1em;
+    transition: background 0.3s, color 0.3s;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+/* --- TABLA DE ANTIGÜEDAD --- */
+.antiguedad-table {
+    margin-top: 10px;
+}
+
+/* --- SECCIÓN DE HORAS --- */
+.horas-section {
+    background: #f8f9fa;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid #e9ecef;
+}
+
+.section-title {
+    color: #1976d2;
+    font-size: 1.1em;
+    font-weight: 600;
+    margin: 0 0 12px 0;
+    text-align: center;
+}
+
+/* --- INPUTS DE HORAS --- */
+.hora-input {
+    width: 120px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid #bcdffb;
+    background: #fff;
+    font-size: 1em;
+    transition: border-color 0.2s;
+}
+
+.hora-input:focus {
+    outline: none;
+    border-color: #1976d2;
+    box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.1);
+}
+
+/* --- FILA DE ADICIONAL --- */
+.adicional-row {
+    background: #fffde7;
+    padding: 10px 12px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px #ffd60022;
+}
+
+.adicional-label {
+    font-weight: 700;
+    color: #f9a825;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.adicional-input {
+    width: 120px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 2px solid #f9a825;
+    background: #fffbe7;
+    font-weight: bold;
+    color: #f9a825;
+    font-size: 1em;
+}
+
+/* --- LABELS ESPECIALES --- */
+.sabado-label {
+    font-weight: 700;
+    color: #f9a825;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* --- TOOLTIPS --- */
+.tooltip-trigger {
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+}
+
+.tooltip {
+    display: none;
+    position: absolute;
+    left: 22px;
+    top: -8px;
+    z-index: 10;
+    background: #fffde7;
+    color: #333;
+    border: 1px solid #ffe082;
+    padding: 10px 14px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px #ffd60044;
+    font-size: 0.98em;
+    min-width: 260px;
+    max-width: 320px;
+    white-space: normal;
+    font-weight: normal;
+}
+
+.tooltip-trigger:hover .tooltip,
+.tooltip-trigger:focus .tooltip {
+    display: block;
+}
+
+/* --- ENLACE A CALCULADORA --- */
+.calc-link {
+    margin-left: 2px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    background: #f9a82522;
+    border-radius: 50%;
+    border: 1.5px solid #f9a825;
+    transition: background 0.2s;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.calc-link:hover {
+    background: #f9a825;
+}
+
+.calc-link:hover svg {
+    stroke: #fff;
+}
+
+/* --- SEPARADOR --- */
+.separator {
+    height: 1px;
+    background: #e3eaf3;
+    margin: 8px 0;
+}
+
+/* --- FILA DE PRESENTISMO --- */
+.presentismo-row {
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.presentismo-row .form-label {
+    min-width: 110px;
+}
+
+/* --- BOTONES DE PRESENTISMO --- */
+.presentismo-btn {
+    min-width: 44px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid #1976d2;
+    background: #e3f2fd;
+    color: #1976d2;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+}
+
+.presentismo-btn:hover {
+    background: #bbdefb;
+}
+
+.presentismo-btn.active {
+    background: #1976d2;
+    color: #fff;
+    box-shadow: 0 2px 8px #1976d233;
+}
+
+/* --- DISPLAY DE RESULTADO --- */
+.resultado-display {
+    margin: 18px 0 0 0;
+    font-size: 1.18em;
+    color: #1976d2;
+    font-weight: 600;
+    text-align: center;
+    background: #e3f2fd;
+    border-radius: 10px;
+    padding: 12px;
+    box-shadow: 0 2px 12px #1976d222;
+    min-height: 20px;
+}
+
+.desglose-display {
+    margin-top: 12px;
+    font-size: 1em;
+    color: #1976d2;
+    text-align: center;
+    line-height: 1.4;
+}
+
+/* --- RESPONSIVE DESIGN --- */
+@media (max-width: 768px) {
+    .calc-hora-container {
+        margin: 20px;
+        padding: 24px 20px;
+    }
+    
+    .form-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+    
+    .form-label {
+        min-width: auto;
+        text-align: center;
+    }
+    
+    .button-group {
+        justify-content: center;
+    }
+    
+    .manual-input-group {
+        justify-content: center;
+    }
+    
+    .tooltip {
+        left: -100px;
+        min-width: 200px;
+    }
+}
+/* =================================================================
+   ESTILOS PARA PÁGINA DE INICIO
+   ================================================================= */
+
+/* --- CONTENEDOR PRINCIPAL DE INICIO --- */
+.home-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* --- SECCIÓN DE BIENVENIDA --- */
+.welcome-section {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.main-title {
+    font-size: 3em;
+    color: #1976d2;
+    margin-bottom: 16px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.subtitle {
+    font-size: 1.5em;
+    color: #1976d2;
+    margin-bottom: 12px;
+    font-weight: 500;
+}
+
+.description {
+    font-size: 1.2em;
+    color: #666;
+    margin-bottom: 0;
+}
+
+/* --- GRID DE CARACTERÍSTICAS --- */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    width: 100%;
+    max-width: 1000px;
+    margin-bottom: 40px;
+}
+
+/* --- TARJETAS DE CARACTERÍSTICAS --- */
+.feature-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 30px 24px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(25, 118, 210, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #e3f2fd;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(25, 118, 210, 0.15);
+}
+
+.feature-icon {
+    width: 64px;
+    height: 64px;
+    background: #e3f2fd;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px auto;
+    transition: background 0.3s ease;
+}
+
+.feature-card:hover .feature-icon {
+    background: #bbdefb;
+}
+
+.feature-card h3 {
+    color: #1976d2;
+    font-size: 1.4em;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.feature-card p {
+    color: #666;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.feature-link {
+    display: inline-block;
+    background: #1976d2;
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.3s ease;
+}
+
+.feature-link:hover {
+    background: #1565c0;
+}
+
+/* --- INFORMACIÓN DEL PIE --- */
+.footer-info {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.footer-info p {
+    color: #888;
+    font-size: 1.1em;
+}
+
+/* --- RESPONSIVE DESIGN --- */
+@media (max-width: 768px) {
+    .home-container {
+        padding: 20px 15px;
+    }
+    
+    .main-title {
+        font-size: 2.2em;
+    }
+    
+    .subtitle {
+        font-size: 1.3em;
+    }
+    
+    .description {
+        font-size: 1.1em;
+    }
+    
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .feature-card {
+        padding: 24px 20px;
+    }
+}

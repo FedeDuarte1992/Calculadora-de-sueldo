@@ -15,11 +15,62 @@
             <a href="calcular_dia.html" class="nav-link">Calcular por día</a>
         </nav>
     </header>
-    <div class="container animated-fadein" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:70vh;">
-        <h1 class="main-title" style="font-size:2.5em;margin-bottom:18px;">¡Bienvenido!</h1>
-        <p style="font-size:1.3em;color:#1976d2;margin-bottom:32px;">Usa el menú superior para navegar entre las funciones.</p>
-        <span style="color:#888;font-size:1.1em;">Desarrollado por tu asistente IA</span>
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="home-container">
+        <div class="welcome-section">
+            <h1 class="main-title">¡Bienvenido!</h1>
+            <p class="subtitle">Sistema de Cálculo de Sueldos</p>
+            <p class="description">Usa el menú superior para navegar entre las funciones disponibles.</p>
+        </div>
+        
+        <!-- TARJETAS DE FUNCIONES -->
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1976d2" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12,6 12,12 16,14"/>
+                    </svg>
+                </div>
+                <h3>Cálculo por Hora</h3>
+                <p>Calcula tu salario basado en horas trabajadas, categoría y antigüedad.</p>
+                <a href="calculo_hora.html" class="feature-link">Ir a Cálculo por Hora</a>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1976d2" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                    </svg>
+                </div>
+                <h3>Cálculo por Día</h3>
+                <p>Registra tu asistencia diaria y calcula salarios por quincena.</p>
+                <a href="calcular_dia.html" class="feature-link">Ir a Cálculo por Día</a>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#f9a825" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="3"/>
+                        <rect x="7" y="7" width="10" height="3" rx="1.5"/>
+                        <rect x="7" y="14" width="3" height="3" rx="1.5"/>
+                        <rect x="14" y="14" width="3" height="3" rx="1.5"/>
+                    </svg>
+                </div>
+                <h3>Adicional sobre Básico</h3>
+                <p>Calcula el porcentaje de adicional sobre el sueldo básico.</p>
+                <a href="calculadora_adicional.html" class="feature-link">Ir a Calculadora</a>
+            </div>
+        </div>
+        
+        <div class="footer-info">
+            <p>Desarrollado con ❤️ por tu asistente IA</p>
+        </div>
     </div>
+    <script src="utils.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

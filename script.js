@@ -1,6 +1,23 @@
-// script.js
+/**
+ * =================================================================
+ * SCRIPT PRINCIPAL - CONTROL DE ASISTENCIA Y SALARIO
+ * =================================================================
+ * 
+ * Este archivo maneja la funcionalidad principal del sistema de
+ * control de asistencia y cálculo de salarios por día.
+ * 
+ * Funcionalidades principales:
+ * - Registro de asistencia diaria
+ * - Cálculo de salarios por turno
+ * - Gestión de calendario
+ * - Cálculo de quincenas
+ * - Manejo de feriados
+ * - Almacenamiento local de datos
+ */
 
-//----------------------------------- Elementos del DOM------------------------------------------------------
+// =================================================================
+// ELEMENTOS DEL DOM
+// =================================================================
 const stepSelectTurno = document.getElementById('step-select-turno');
 const stepFichajeStatus = document.getElementById('step-fichaje-status');
 const stepInputHora = document.getElementById('input-hora-ingreso');
@@ -19,7 +36,11 @@ const editingDateDisplay = document.getElementById('editing-date-display');
 const deleteRecordBtn = document.getElementById('delete-record-btn');
 const currentMonthYearDisplay = document.getElementById('current-month-year');
 const calendarDaysGrid = document.getElementById('calendar-days');
-//------------------------------------------------------ Variables de estado global------------------------------------------------------
+// =================================================================
+// VARIABLES DE ESTADO GLOBAL
+// =================================================================
+
+// Variables para el flujo de registro de asistencia
 let selectedTurno = null;
 let entryTime = null;
 let selectedCategory = null;
@@ -34,10 +55,20 @@ let currentCalendarDate = new Date(); // Controla el mes y año que se muestra e
 // Variable global para marcar si el registro actual es feriado
 let isFeriadoRegistro = false;
 
-// ------------------------------------------------------*** VALORES DE CONFIGURACIÓN ------------------------------------------------------
+// =================================================================
+// CONFIGURACIÓN DEL SISTEMA
+// =================================================================
+
+/**
+ * Configuración básica del sistema de cálculo de salarios
+ */
 const JORNADA_HORAS = 8;
 const MINUTOS_TOLERANCIA_TARDE = 15;
 
+/**
+ * Tabla salarial por categoría y mes
+ * Valores actualizados según convenio vigente
+ */
 const TABLA_SALARIAL = {
     'A': {
         'Enero': 2546, 'Febrero': 2583, 'Marzo': 2621, 'Abril': 2658, 'Mayo': 2696,
@@ -73,7 +104,10 @@ const TABLA_SALARIAL = {
     }
 };
 
-// SUMA_NO_REMUN unificada: solo claves de mes simple
+/**
+ * Suma no remunerativa por mes
+ * Montos adicionales que no forman parte del salario básico
+ */
 const SUMA_NO_REMUN = {
     'Enero': 210000,
     'Febrero': 210000,
@@ -89,8 +123,11 @@ const SUMA_NO_REMUN = {
     'Diciembre': 210000
 };
 
-//------------------------------------------------------ Actualizada con los valores del nuevo PDF (a partir de 01/03/2025)
-// Tabla de bonificación por antigüedad: solo meses simples, sin año
+/**
+ * Tabla de bonificación por antigüedad
+ * Valores por años de antigüedad y mes
+ * Actualizada según convenio vigente (01/03/2025)
+ */
 const TABLA_ANTIGUEDAD = {
     '1 años': { 'Enero': 25, 'Febrero': 25, 'Marzo': 25, 'Abril': 25, 'Mayo': 25, 'Junio': 25, 'Julio': 27, 'Agosto': 27, 'Septiembre': 28, 'Octubre': 28, 'Noviembre': 29, 'Diciembre': 29 },
     '3 años': { 'Enero': 37, 'Febrero': 37, 'Marzo': 37, 'Abril': 37, 'Mayo': 37, 'Junio': 37, 'Julio': 39, 'Agosto': 40, 'Septiembre': 41, 'Octubre': 42, 'Noviembre': 43, 'Diciembre': 43 },
@@ -108,20 +145,32 @@ const TABLA_ANTIGUEDAD = {
 };
 
 
+/**
+ * Horarios estándar de ingreso por turno
+ */
 const HORAS_ESTANDAR_INGRESO = {
     'manana': '06:00',
     'tarde': '14:00',
     'noche': '22:00'
 };
 
+/**
+ * Nombres de los meses en español
+ */
 const MONTH_NAMES = [
     'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
     'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
 ];
 
+/**
+ * Almacenamiento local de registros de trabajo
+ * Se guarda en localStorage del navegador
+ */
 const workRecords = JSON.parse(localStorage.getItem('workRecords')) || {};
-// **********************************************
-//------------------------------------------------------ ------------------------------------------------------
+
+// =================================================================
+// FUNCIONES DE UTILIDAD
+// =================================================================
 // Helper para formatear moneda sin decimales y con separador de miles
 function formatCurrency(number) {
     if (typeof number !== 'number') {

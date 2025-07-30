@@ -3,24 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cálculo por Hora</title>
+    <title>Cálculo por Hora - Calculadora de Sueldo</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- HEADER DE NAVEGACIÓN -->
+    <!-- NAVEGACIÓN PRINCIPAL -->
     <header class="main-header animated-fadein">
         <nav class="main-nav">
             <a href="index.html" class="nav-link nav-logo">Inicio</a>
             <a href="calculo_hora.html" class="nav-link active">Calcular por hora</a>
-            <a href="index.html" class="nav-link">Calcular por día</a>
+            <a href="calcular_dia.html" class="nav-link">Calcular por día</a>
+            <a href="calculadora_adicional.html" class="nav-link">Adic. sobre básico</a>
         </nav>
     </header>
-    <div class="container animated-fadein" style="max-width:540px;margin:48px auto;padding:40px 32px;background:#f7faff;border-radius:22px;box-shadow:0 4px 32px #1976d244;display:flex;flex-direction:column;gap:24px;">
-        <h2 style="text-align:center;color:#1976d2;margin-bottom:8px;font-size:2em;letter-spacing:1px;">Cálculo por Hora</h2>
-        <div style="display:flex;flex-direction:column;gap:18px;">
-            <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;">
-                <label style="flex:1;font-weight:500;color:#1976d2;">Categoría</label>
-                <div id="categoria-group" style="display:flex;gap:8px;flex-wrap:wrap;">
+
+    <!-- CONTENEDOR PRINCIPAL DE CÁLCULO POR HORAS -->
+    <div class="calc-hora-container">
+        <h2 class="calc-hora-title">Cálculo por Hora</h2>
+        
+        <!-- FORMULARIO DE CÁLCULO -->
+        <div class="calc-form">
+            <!-- SELECCIÓN DE CATEGORÍA -->
+            <div class="form-row">
+                <label class="form-label">Categoría</label>
+                <div class="button-group" id="categoria-group">
                     <button type="button" class="categoria-btn" data-value="A">A</button>
                     <button type="button" class="categoria-btn" data-value="B">B</button>
                     <button type="button" class="categoria-btn" data-value="C">C</button>
@@ -30,27 +36,45 @@
                     <button type="button" class="categoria-btn" data-value="G">G</button>
                     <button type="button" class="categoria-btn" data-value="H">H</button>
                 </div>
-                <input type="hidden" id="categoria" value="A">
+                <input type="hidden" id="categoria" value="">
             </div>
-            <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;">
-                <label style="flex:1;font-weight:500;color:#1976d2;">Mes</label>
-                <div id="mes-group" style="display:flex;gap:8px;flex-wrap:wrap;">
-                    <button type="button" class="mes-btn" data-value="junio">Junio</button>
-                    <button type="button" class="mes-btn" data-value="julio">Julio</button>
-                    <button type="button" class="mes-btn" data-value="agosto">Agosto</button>
-                    <button type="button" class="mes-btn" data-value="septiembre">Septiembre</button>
-                    <button type="button" class="mes-btn" data-value="octubre">Octubre</button>
-                    <button type="button" class="mes-btn" data-value="noviembre">Noviembre</button>
+
+            <!-- SELECCIÓN DE MES -->
+            <div class="form-row">
+                <label class="form-label">Mes</label>
+                <div class="button-group" id="mes-group">
+                    <button type="button" class="mes-btn" data-value="junio">Jun</button>
+                    <button type="button" class="mes-btn" data-value="julio">Jul</button>
+                    <button type="button" class="mes-btn" data-value="agosto">Ago</button>
+                    <button type="button" class="mes-btn" data-value="septiembre">Sep</button>
+                    <button type="button" class="mes-btn" data-value="octubre">Oct</button>
+                    <button type="button" class="mes-btn" data-value="noviembre">Nov</button>
                 </div>
-                <input type="hidden" id="mes" value="junio">
+                <input type="hidden" id="mes" value="">
             </div>
-            <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;">
-                <label style="flex:1;font-weight:500;color:#1976d2;">Valor Hora</label>
-                <span id="valor-hora-mostrar" class="animated-flash" style="font-weight:bold;color:#1976d2;font-size:1.1em;transition:background 0.3s, color 0.3s;">$0</span>
+
+            <!-- VALOR HORA MANUAL -->
+            <div class="form-row">
+                <label class="form-label">Ingresar valor hora manualmente</label>
+                <div class="manual-input-group">
+                    <input type="number" id="valor-hora-manual" class="manual-input" min="0" step="0.01" placeholder="Ej: 1234.56" disabled>
+                    <button type="button" id="usar-valor-manual" class="manual-btn">Usar</button>
+                </div>
             </div>
-            <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;">
-                <label style="flex:1;font-weight:500;color:#1976d2;">Antigüedad (años)</label>
-                <div id="antiguedad-group" style="display:flex;gap:8px;flex-wrap:wrap;">
+            
+            <!-- MENSAJE DE VALOR MANUAL -->
+            <div id="msg-valor-manual" class="manual-message"></div>
+
+            <!-- VALOR HORA CALCULADO -->
+            <div class="form-row">
+                <label class="form-label">Valor Hora</label>
+                <span id="valor-hora-mostrar" class="valor-hora-display">$0</span>
+            </div>
+
+            <!-- SELECCIÓN DE ANTIGÜEDAD -->
+            <div class="form-row">
+                <label class="form-label">Antigüedad (años)</label>
+                <div class="button-group" id="antiguedad-group">
                     <button type="button" class="antiguedad-btn" data-value="1">1</button>
                     <button type="button" class="antiguedad-btn" data-value="3">3</button>
                     <button type="button" class="antiguedad-btn" data-value="5">5</button>
@@ -67,35 +91,99 @@
                 </div>
                 <input type="hidden" id="antiguedad" value="1">
             </div>
-            <div id="tabla-antiguedad" style="margin-top:10px;"></div>
-            <div style="display:flex;align-items:center;gap:18px;">
-                <label style="flex:1;">Horas normales</label>
-                <input type="number" id="horas-normales" min="0" max="24" value="0" style="width:120px;padding:8px 10px;border-radius:8px;border:1px solid #bcdffb;background:#fff;">
+
+            <!-- TABLA DE ANTIGÜEDAD -->
+            <div id="tabla-antiguedad" class="antiguedad-table"></div>
+
+            <!-- SECCIÓN DE HORAS TRABAJADAS -->
+            <div class="horas-section">
+                <h3 class="section-title">Horas Trabajadas</h3>
+                
+                <!-- HORAS NORMALES -->
+                <div class="form-row">
+                    <label class="form-label">Horas normales</label>
+                    <input type="number" id="horas-normales" class="hora-input" min="0" max="24" value="0">
+                </div>
+
+                <!-- HORAS NOCTURNAS -->
+                <div class="form-row">
+                    <label class="form-label">Horas nocturnas</label>
+                    <input type="number" id="horas-nocturnas" class="hora-input" min="0" max="24" value="0">
+                </div>
+
+                <!-- ADICIONAL SOBRE BÁSICO -->
+                <div class="form-row adicional-row">
+                    <label class="form-label adicional-label">
+                        Adicional sobre básico (%)
+                        <span class="tooltip-trigger" tabindex="0">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f9a825" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="12" y1="16" x2="12" y2="12"/>
+                                <line x1="12" y1="8" x2="12.01" y2="8"/>
+                            </svg>
+                            <span class="tooltip" id="tooltip-adic">
+                                Ingresá el porcentaje de adicional sobre el básico que corresponde.<br><br>
+                                El adicional se calcula como ese porcentaje aplicado a la suma de horas normales y horas nocturnas.<br><br>
+                                <b>adicional = (horas normales + horas nocturnas) × (porcentaje / 100)</b>
+                            </span>
+                        </span>
+                        <a href="calculadora_adicional.html" class="calc-link" title="Ir a calculadora de adicional sobre básico" tabindex="0">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f9a825" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="18" height="18" rx="3"/>
+                                <rect x="7" y="7" width="10" height="3" rx="1.5"/>
+                                <rect x="7" y="14" width="3" height="3" rx="1.5"/>
+                                <rect x="14" y="14" width="3" height="3" rx="1.5"/>
+                            </svg>
+                        </a>
+                    </label>
+                    <input type="number" id="adicional-basico" class="adicional-input" min="0" max="100" step="0.01" value="0" placeholder="Ej: 20">
+                </div>
+
+                <!-- HORAS SÁBADO 100% -->
+                <div class="form-row">
+                    <label class="form-label sabado-label">
+                        Horas sábado 100%
+                        <span class="tooltip-trigger" tabindex="0">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f9a825" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="12" y1="16" x2="12" y2="12"/>
+                                <line x1="12" y1="8" x2="12.01" y2="8"/>
+                            </svg>
+                            <span class="tooltip" id="tooltip-sabado">
+                                Sábados TM 7h normales + 1h 100%<br>
+                                Ingresá aquí las horas trabajadas al 100% los sábados.
+                            </span>
+                        </span>
+                    </label>
+                    <input type="number" id="horas-sabado" class="hora-input" min="0" max="24" value="0">
+                </div>
+
+                <!-- HORAS SÁBADO 50% -->
+                <div class="form-row">
+                    <label class="form-label">Horas sábado (50%)</label>
+                    <input type="number" id="horas-sabado-50" class="hora-input" min="0" max="24" value="0">
+                </div>
+
+                <!-- HORAS NOCTURNAS 50% -->
+                <div class="form-row">
+                    <label class="form-label">Horas nocturnas (50%)</label>
+                    <input type="number" id="horas-nocturnas-50" class="hora-input" min="0" max="24" value="0">
+                </div>
+
+                <!-- HORAS FERIADO -->
+                <div class="form-row">
+                    <label class="form-label">Horas feriado</label>
+                    <input type="number" id="horas-feriado" class="hora-input" min="0" max="24" value="0">
+                </div>
             </div>
-            <div style="display:flex;align-items:center;gap:18px;">
-                <label style="flex:1;">Horas sábado</label>
-                <input type="number" id="horas-sabado" min="0" max="24" value="0" style="width:120px;padding:8px 10px;border-radius:8px;border:1px solid #bcdffb;background:#fff;">
-            </div>
-            <div style="display:flex;align-items:center;gap:18px;">
-                <label style="flex:1;">Horas sábado (%50)</label>
-                <input type="number" id="horas-sabado-50" min="0" max="24" value="0" style="width:120px;padding:8px 10px;border-radius:8px;border:1px solid #bcdffb;background:#fff;">
-            </div>
-            <div style="display:flex;align-items:center;gap:18px;">
-                <label style="flex:1;">Horas nocturnas</label>
-                <input type="number" id="horas-nocturnas" min="0" max="24" value="0" style="width:120px;padding:8px 10px;border-radius:8px;border:1px solid #bcdffb;background:#fff;">
-            </div>
-            <div style="display:flex;align-items:center;gap:18px;">
-                <label style="flex:1;">Horas nocturnas (%50)</label>
-                <input type="number" id="horas-nocturnas-50" min="0" max="24" value="0" style="width:120px;padding:8px 10px;border-radius:8px;border:1px solid #bcdffb;background:#fff;">
-            </div>
-            <div style="display:flex;align-items:center;gap:18px;">
-                <label style="flex:1;">Horas feriado</label>
-                <input type="number" id="horas-feriado" min="0" max="24" value="0" style="width:120px;padding:8px 10px;border-radius:8px;border:1px solid #bcdffb;background:#fff;">
-            </div>
-            <div style="height:1px;background:#e3eaf3;margin:8px 0 0 0;"></div>
-            <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;">
-                <label style="flex:1;font-weight:500;color:#1976d2;">Presentismo</label>
-                <div id="presentismo-group" style="display:flex;gap:8px;flex-wrap:wrap;">
+
+            <!-- SEPARADOR -->
+            <div class="separator"></div>
+
+            <!-- PRESENTISMO -->
+            <div class="form-row presentismo-row">
+                <label class="form-label">Presentismo</label>
+                <div class="button-group" id="presentismo-group">
                     <button type="button" class="presentismo-btn" data-value="0.20">20%</button>
                     <button type="button" class="presentismo-btn" data-value="0.14">14%</button>
                     <button type="button" class="presentismo-btn" data-value="0.07">7%</button>
@@ -103,10 +191,15 @@
                 </div>
                 <input type="hidden" id="presentismo" value="0.20">
             </div>
+
+            <!-- RESULTADO -->
+            <div id="resultado-hora" class="resultado-display"></div>
+            <div id="desglose-hora" class="desglose-display"></div>
         </div>
-        <div id="desglose-hora" style="margin-top:12px;font-size:1em;color:#1976d2;text-align:center;"></div>
-        <div id="resultado-hora" style="margin-top:12px;font-size:1.18em;color:#1976d2;font-weight:500;text-align:center;"></div>
     </div>
+
+    <!-- SCRIPTS -->
+    <script src="utils.js"></script>
     <script src="script.js"></script>
     <script src="script_hora.js"></script>
 </body>
