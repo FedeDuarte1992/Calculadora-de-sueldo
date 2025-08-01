@@ -59,6 +59,7 @@
                 <div class="manual-input-group">
                     <input type="number" id="valor-hora-manual" class="manual-input" min="0" step="0.01" placeholder="Ej: 1234.56" disabled>
                     <button type="button" id="usar-valor-manual" class="manual-btn">Usar</button>
+                    <button type="button" id="cancelar-valor-manual" class="cancel-btn" style="display:none;">Cancelar</button>
                 </div>
             </div>
             
@@ -97,7 +98,26 @@
 
             <!-- SECCIÓN DE HORAS TRABAJADAS -->
             <div class="horas-section">
-                <h3 class="section-title">Horas Trabajadas</h3>
+                <h3 class="section-title">Horas Trabajadas
+                    <span class="tooltip-trigger" tabindex="0">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f9a825" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="16" x2="12" y2="12"/>
+                            <line x1="12" y1="8" x2="12.01" y2="8"/>
+                        </svg>
+                        <span class="tooltip" id="tooltip-turnos">
+                            <b>(Mañana):</b><br>
+                            Lunes a Viernes: 8 hs normales.<br>
+                            Sábados: 7 hs normales + 1 hs al 100%.<br><br>
+                            <b>(Tarde):</b><br>
+                            Lunes a Viernes: 7 hs normales + 1 hs nocturna.<br>
+                            Sábados: 7 hs al 100% + 1 hs nocturna al 100%.<br><br>
+                            <b>(Noche):</b><br>
+                            Lunes a Viernes: 7 hs nocturnas + 1 hs nocturna al 50%.<br>
+                            Domingos: 6 hs nocturnas + 2 hs nocturnas al 100%.
+                        </span>
+                    </span>
+                </h3>
                 
                 <!-- HORAS NORMALES -->
                 <div class="form-row">
@@ -139,10 +159,10 @@
                     <input type="number" id="adicional-basico" class="adicional-input" min="0" max="100" step="0.01" value="0" placeholder="Ej: 20">
                 </div>
 
-                <!-- HORAS SÁBADO 100% -->
+                <!-- HORAS 100% (SÁBADO) -->
                 <div class="form-row">
                     <label class="form-label sabado-label">
-                        Horas sábado 100%
+                        Horas 100% (sábado)
                         <span class="tooltip-trigger" tabindex="0">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f9a825" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <circle cx="12" cy="12" r="10"/>
@@ -158,16 +178,35 @@
                     <input type="number" id="horas-sabado" class="hora-input" min="0" max="24" value="0">
                 </div>
 
-                <!-- HORAS SÁBADO 50% -->
+                <!-- HORAS AL 50% -->
                 <div class="form-row">
-                    <label class="form-label">Horas sábado (50%)</label>
-                    <input type="number" id="horas-sabado-50" class="hora-input" min="0" max="24" value="0">
+                    <label class="form-label">Horas al 50%</label>
+                    <input type="number" id="horas-50" class="hora-input" min="0" max="24" value="0">
                 </div>
 
                 <!-- HORAS NOCTURNAS 50% -->
                 <div class="form-row">
-                    <label class="form-label">Horas nocturnas (50%)</label>
+                    <label class="form-label sabado-label">
+                        Horas nocturnas (50%)
+                        <span class="tooltip-trigger" tabindex="0">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f9a825" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="12" y1="16" x2="12" y2="12"/>
+                                <line x1="12" y1="8" x2="12.01" y2="8"/>
+                            </svg>
+                            <span class="tooltip" id="tooltip-nocturnas-50">
+                                De lunes a viernes 7h noc + 1h al 50%<br>
+                                Ingresá aquí las horas nocturnas con recargo del 50%.
+                            </span>
+                        </span>
+                    </label>
                     <input type="number" id="horas-nocturnas-50" class="hora-input" min="0" max="24" value="0">
+                </div>
+
+                <!-- HORAS NOCTURNAS 100% -->
+                <div class="form-row">
+                    <label class="form-label">Horas nocturnas (100%)</label>
+                    <input type="number" id="horas-nocturnas-100" class="hora-input" min="0" max="24" value="0">
                 </div>
 
                 <!-- HORAS FERIADO -->
@@ -198,9 +237,90 @@
         </div>
     </div>
 
+    <!-- PARTÍCULAS FLOTANTES -->
+    <div class="floating-particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <!-- CURSOR PERSONALIZADO -->
+    <div class="custom-cursor"></div>
+    <div class="cursor-trail"></div>
+
     <!-- SCRIPTS -->
     <script src="utils.js"></script>
     <script src="script.js"></script>
     <script src="script_hora.js"></script>
+    
+    <!-- SCRIPT DE EFECTOS VISUALES -->
+    <script>
+        // Cursor personalizado
+        const cursor = document.querySelector('.custom-cursor');
+        const cursorTrail = document.querySelector('.cursor-trail');
+        
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            
+            setTimeout(() => {
+                cursorTrail.style.left = e.clientX + 'px';
+                cursorTrail.style.top = e.clientY + 'px';
+            }, 100);
+        });
+        
+        // Efectos de click
+        document.addEventListener('click', (e) => {
+            const ripple = document.createElement('div');
+            ripple.className = 'click-ripple';
+            ripple.style.left = e.clientX + 'px';
+            ripple.style.top = e.clientY + 'px';
+            document.body.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        });
+        
+        // Animación de números en el resultado
+        function animateNumber(element, finalNumber) {
+            const duration = 1000;
+            const start = 0;
+            const startTime = performance.now();
+            
+            function updateNumber(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const current = start + (finalNumber - start) * easeOutQuart(progress);
+                
+                element.textContent = '$' + Math.floor(current).toLocaleString('es-AR');
+                
+                if (progress < 1) {
+                    requestAnimationFrame(updateNumber);
+                }
+            }
+            
+            requestAnimationFrame(updateNumber);
+        }
+        
+        function easeOutQuart(t) {
+            return 1 - (--t) * t * t * t;
+        }
+        
+        // Observador para animaciones al hacer scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                }
+            });
+        });
+        
+        document.querySelectorAll('.form-row').forEach(row => {
+            observer.observe(row);
+        });
+    </script>
 </body>
 </html>

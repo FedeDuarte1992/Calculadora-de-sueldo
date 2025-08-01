@@ -33,6 +33,20 @@
                 <button class="secondary holiday-button" onclick="selectTurno('feriado')">Feriado (8hs normales)</button>
             </div>
         </div>
+        <div class="calendar-container animated-fadein">
+        <div class="calendar-header">
+            <button onclick="changeMonth(-1)">&#9664;</button>
+            <h3 id="current-month-year"></h3>
+            <button onclick="changeMonth(1)">&#9654;</button>
+        </div>
+        <div class="calendar-grid" id="calendar-weekdays">
+            <span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span><span>Dom</span>
+        </div>
+        <div class="calendar-grid" id="calendar-days"></div>
+        <button id="open-multi-day-modal-btn" style="display: none; margin-top: 15px;" onclick="openMultiDayScheduleModal()">
+            Aplicar Horario a Días Seleccionados (<span id="selected-days-count">0</span>)
+        </button>
+    </div>
         <div id="step-fichaje-status" class="step-box" style="display: none;">
             <p>¿Fichaste temprano o tarde?</p>
             <div class="btn-group">
@@ -87,20 +101,7 @@
             <ul id="history-list"></ul>
         </div>
     </div>
-    <div class="calendar-container animated-fadein">
-        <div class="calendar-header">
-            <button onclick="changeMonth(-1)">&#9664;</button>
-            <h3 id="current-month-year"></h3>
-            <button onclick="changeMonth(1)">&#9654;</button>
-        </div>
-        <div class="calendar-grid" id="calendar-weekdays">
-            <span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span><span>Dom</span>
-        </div>
-        <div class="calendar-grid" id="calendar-days"></div>
-        <button id="open-multi-day-modal-btn" style="display: none; margin-top: 15px;" onclick="openMultiDayScheduleModal()">
-            Aplicar Horario a Días Seleccionados (<span id="selected-days-count">0</span>)
-        </button>
-    </div>
+    
     <div id="multiDayScheduleModal" class="modal" style="display:none;">
         <div class="modal-content">
             <span class="close-button" onclick="closeMultiDayScheduleModal()">&times;</span>

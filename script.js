@@ -71,36 +71,28 @@ const MINUTOS_TOLERANCIA_TARDE = 15;
  */
 const TABLA_SALARIAL = {
     'A': {
-        'Enero': 2546, 'Febrero': 2583, 'Marzo': 2621, 'Abril': 2658, 'Mayo': 2696,
-        'Junio': 2750, 'Julio': 2804, 'Agosto': 2858, 'Septiembre': 2912, 'Octubre': 2966, 'Noviembre': 3020, 'Diciembre': 3020
+        'Junio': 2750, 'Julio': 2804, 'Agosto': 2858, 'Septiembre': 2912, 'Octubre': 2966, 'Noviembre': 3020
     },
     'B': {
-        'Enero': 2593, 'Febrero': 2631, 'Marzo': 2669, 'Abril': 2707, 'Mayo': 2745,
-        'Junio': 2800, 'Julio': 2855, 'Agosto': 2910, 'Septiembre': 2965, 'Octubre': 3020, 'Noviembre': 3074, 'Diciembre': 3074
+        'Junio': 2800, 'Julio': 2855, 'Agosto': 2910, 'Septiembre': 2965, 'Octubre': 3020, 'Noviembre': 3074
     },
     'C': {
-        'Enero': 2643, 'Febrero': 2682, 'Marzo': 2721, 'Abril': 2759, 'Mayo': 2798,
-        'Junio': 2854, 'Julio': 2910, 'Agosto': 2966, 'Septiembre': 3022, 'Octubre': 3078, 'Noviembre': 3134, 'Diciembre': 3134
+        'Junio': 2854, 'Julio': 2910, 'Agosto': 2966, 'Septiembre': 3022, 'Octubre': 3078, 'Noviembre': 3134
     },
     'D': {
-        'Enero': 2690, 'Febrero': 2729, 'Marzo': 2769, 'Abril': 2808, 'Mayo': 2848,
-        'Junio': 2905, 'Julio': 2962, 'Agosto': 3019, 'Septiembre': 3076, 'Octubre': 3133, 'Noviembre': 3190, 'Diciembre': 3190
+        'Junio': 2905, 'Julio': 2962, 'Agosto': 3019, 'Septiembre': 3076, 'Octubre': 3133, 'Noviembre': 3190
     },
     'E': {
-        'Enero': 2745, 'Febrero': 2785, 'Marzo': 2826, 'Abril': 2866, 'Mayo': 2906,
-        'Junio': 2964, 'Julio': 3022, 'Agosto': 3080, 'Septiembre': 3138, 'Octubre': 3197, 'Noviembre': 3255, 'Diciembre': 3255
+        'Junio': 2964, 'Julio': 3022, 'Agosto': 3080, 'Septiembre': 3138, 'Octubre': 3197, 'Noviembre': 3255
     },
     'F': {
-        'Enero': 2798, 'Febrero': 2839, 'Marzo': 2880, 'Abril': 2921, 'Mayo': 2962,
-        'Junio': 3021, 'Julio': 3080, 'Agosto': 3140, 'Septiembre': 3199, 'Octubre': 3258, 'Noviembre': 3317, 'Diciembre': 3317
+        'Junio': 3021, 'Julio': 3080, 'Agosto': 3140, 'Septiembre': 3199, 'Octubre': 3258, 'Noviembre': 3317
     },
     'G': {
-        'Enero': 2885, 'Febrero': 2927, 'Marzo': 2969, 'Abril': 3012, 'Mayo': 3054,
-        'Junio': 3115, 'Julio': 3176, 'Agosto': 3237, 'Septiembre': 3298, 'Octubre': 3359, 'Noviembre': 3420, 'Diciembre': 3420
+        'Junio': 3115, 'Julio': 3176, 'Agosto': 3237, 'Septiembre': 3298, 'Octubre': 3359, 'Noviembre': 3420
     },
     'H': {
-        'Enero': 2947, 'Febrero': 2990, 'Marzo': 3033, 'Abril': 3077, 'Mayo': 3120,
-        'Junio': 3182, 'Julio': 3245, 'Agosto': 3307, 'Septiembre': 3370, 'Octubre': 3432, 'Noviembre': 3494, 'Diciembre': 3494
+        'Junio': 3182, 'Julio': 3245, 'Agosto': 3307, 'Septiembre': 3370, 'Octubre': 3432, 'Noviembre': 3494
     }
 };
 
@@ -125,23 +117,22 @@ const SUMA_NO_REMUN = {
 
 /**
  * Tabla de bonificación por antigüedad
- * Valores por años de antigüedad y mes
- * Actualizada según convenio vigente (01/03/2025)
+ * Valores fijos por años de antigüedad
  */
 const TABLA_ANTIGUEDAD = {
-    '1 años': { 'Enero': 25, 'Febrero': 25, 'Marzo': 25, 'Abril': 25, 'Mayo': 25, 'Junio': 25, 'Julio': 27, 'Agosto': 27, 'Septiembre': 28, 'Octubre': 28, 'Noviembre': 29, 'Diciembre': 29 },
-    '3 años': { 'Enero': 37, 'Febrero': 37, 'Marzo': 37, 'Abril': 37, 'Mayo': 37, 'Junio': 37, 'Julio': 39, 'Agosto': 40, 'Septiembre': 41, 'Octubre': 42, 'Noviembre': 43, 'Diciembre': 43 },
-    '5 años': { 'Enero': 50, 'Febrero': 50, 'Marzo': 50, 'Abril': 50, 'Mayo': 50, 'Junio': 50, 'Julio': 53, 'Agosto': 54, 'Septiembre': 56, 'Octubre': 57, 'Noviembre': 58, 'Diciembre': 58 },
-    '7 años': { 'Enero': 68, 'Febrero': 68, 'Marzo': 68, 'Abril': 68, 'Mayo': 68, 'Junio': 68, 'Julio': 72, 'Agosto': 74, 'Septiembre': 76, 'Octubre': 78, 'Noviembre': 79, 'Diciembre': 79 },
-    '9 años': { 'Enero': 81, 'Febrero': 81, 'Marzo': 81, 'Abril': 81, 'Mayo': 81, 'Junio': 81, 'Julio': 86, 'Agosto': 88, 'Septiembre': 91, 'Octubre': 93, 'Noviembre': 95, 'Diciembre': 95 },
-    '12 años': { 'Enero': 108, 'Febrero': 108, 'Marzo': 108, 'Abril': 108, 'Mayo': 108, 'Junio': 108, 'Julio': 114, 'Agosto': 117, 'Septiembre': 121, 'Octubre': 124, 'Noviembre': 127, 'Diciembre': 127 },
-    '15 años': { 'Enero': 130, 'Febrero': 130, 'Marzo': 130, 'Abril': 130, 'Mayo': 130, 'Junio': 130, 'Julio': 138, 'Agosto': 142, 'Septiembre': 146, 'Octubre': 150, 'Noviembre': 153, 'Diciembre': 153 },
-    '18 años': { 'Enero': 152, 'Febrero': 152, 'Marzo': 152, 'Abril': 152, 'Mayo': 152, 'Junio': 152, 'Julio': 161, 'Agosto': 165, 'Septiembre': 170, 'Octubre': 174, 'Noviembre': 178, 'Diciembre': 178 },
-    '22 años': { 'Enero': 175, 'Febrero': 175, 'Marzo': 175, 'Abril': 175, 'Mayo': 175, 'Junio': 175, 'Julio': 186, 'Agosto': 190, 'Septiembre': 196, 'Octubre': 200, 'Noviembre': 204, 'Diciembre': 204 },
-    '26 años': { 'Enero': 198, 'Febrero': 198, 'Marzo': 198, 'Abril': 198, 'Mayo': 198, 'Junio': 198, 'Julio': 210, 'Agosto': 215, 'Septiembre': 222, 'Octubre': 227, 'Noviembre': 232, 'Diciembre': 232 },
-    '30 años': { 'Enero': 217, 'Febrero': 217, 'Marzo': 217, 'Abril': 217, 'Mayo': 217, 'Junio': 217, 'Julio': 230, 'Agosto': 235, 'Septiembre': 243, 'Octubre': 248, 'Noviembre': 253, 'Diciembre': 253 },
-    '35 años': { 'Enero': 238, 'Febrero': 238, 'Marzo': 238, 'Abril': 238, 'Mayo': 238, 'Junio': 238, 'Julio': 252, 'Agosto': 258, 'Septiembre': 267, 'Octubre': 273, 'Noviembre': 278, 'Diciembre': 278 },
-    '40 años': { 'Enero': 261, 'Febrero': 261, 'Marzo': 261, 'Abril': 261, 'Mayo': 261, 'Junio': 261, 'Julio': 277, 'Agosto': 283, 'Septiembre': 292, 'Octubre': 298, 'Noviembre': 304, 'Diciembre': 304 }
+    1: 25,
+    3: 37,
+    5: 50,
+    7: 68,
+    9: 81,
+    12: 108,
+    15: 130,
+    18: 152,
+    22: 175,
+    26: 198,
+    30: 217,
+    35: 238,
+    40: 261
 };
 
 
@@ -169,6 +160,116 @@ const MONTH_NAMES = [
 const workRecords = JSON.parse(localStorage.getItem('workRecords')) || {};
 
 // =================================================================
+// FUNCIONES DE CÁLCULO CORRECTAS
+// =================================================================
+
+/**
+ * Calcula el salario diario según el turno y día de la semana
+ * Basado en el cuadro de turnos proporcionado
+ */
+function calcularSalarioDiario(turno, valorHora, valorAntiguedad, dayOfWeek, extraHours = 0) {
+    let horasNormales = 0;
+    let horasNocturnas = 0;
+    let horasSabado100 = 0;
+    let horasNocturnas50 = 0;
+    let horasNocturnas100 = 0;
+    
+    // Aplicar lógica según turno y día
+    switch (turno) {
+        case 'manana':
+            if (dayOfWeek === 6) { // Sábado
+                horasNormales = 7;
+                horasSabado100 = 1;
+            } else { // Lunes a Viernes
+                horasNormales = 8;
+            }
+            break;
+            
+        case 'tarde':
+            if (dayOfWeek === 6) { // Sábado
+                horasSabado100 = 7;
+                horasNocturnas100 = 1;
+            } else { // Lunes a Viernes
+                horasNormales = 7;
+                horasNocturnas = 1;
+            }
+            break;
+            
+        case 'noche':
+            if (dayOfWeek === 0) { // Domingo
+                horasNocturnas = 6;
+                horasNocturnas100 = 2;
+            } else { // Lunes a Viernes
+                horasNocturnas = 7;
+                horasNocturnas50 = 1;
+            }
+            break;
+            
+        case 'feriado':
+            horasNormales = 8; // 8 horas normales en feriado
+            break;
+    }
+    
+    // Calcular montos
+    let total = 0;
+    
+    // Horas normales
+    if (horasNormales > 0) {
+        total += horasNormales * valorHora;
+    }
+    
+    // Horas nocturnas (30% adicional)
+    if (horasNocturnas > 0) {
+        total += horasNocturnas * (valorHora * 1.3);
+    }
+    
+    // Antigüedad sobre horas normales y nocturnas
+    const totalHorasBasicas = horasNormales + horasNocturnas;
+    if (totalHorasBasicas > 0 && valorAntiguedad > 0) {
+        total += totalHorasBasicas * valorAntiguedad;
+    }
+    
+    // Horas 100% (sábado)
+    if (horasSabado100 > 0) {
+        const base = valorHora + valorAntiguedad;
+        const valorHoraSabado100 = base * 1.2 * 2; // (base + 20%) * 2
+        total += horasSabado100 * valorHoraSabado100;
+    }
+    
+    // Horas nocturnas 50%
+    if (horasNocturnas50 > 0) {
+        const nocturnidad = valorHora * 0.3;
+        const subtotal = valorHora + valorAntiguedad + nocturnidad;
+        const baseFinal = subtotal * 1.2045; // + 20.45%
+        const valorFinal = baseFinal * 1.5; // + 50%
+        total += horasNocturnas50 * valorFinal;
+    }
+    
+    // Horas nocturnas 100%
+    if (horasNocturnas100 > 0) {
+        const nocturnidad = valorHora * 0.3;
+        const subtotal = valorHora + valorAntiguedad + nocturnidad;
+        const baseFinal = subtotal * 1.2045; // + 20.45%
+        const valorFinal = baseFinal * 2; // + 100%
+        total += horasNocturnas100 * valorFinal;
+    }
+    
+    // Horas extras (simplificado)
+    if (extraHours > 0) {
+        const valorHoraExtra = (turno === 'noche') ? valorHora * 1.3 * 1.5 : valorHora * 1.5;
+        total += extraHours * valorHoraExtra;
+    }
+    
+    // Si es feriado, duplicar el total
+    if (turno === 'feriado') {
+        const valorHoraFeriado = (valorHora + valorAntiguedad) * 1.2;
+        total = 8 * valorHoraFeriado;
+    }
+    
+    return total;
+}
+
+// =================================================================
 // FUNCIONES DE UTILIDAD
 // =================================================================
 // Helper para formatear moneda sin decimales y con separador de miles
@@ -183,15 +284,9 @@ function formatCurrency(number) {
         maximumFractionDigits: 0
     }).format(number);
 }
-// Obtiene la bonificación por antigüedad según años y mes (solo mes simple)
-function getBonificacionAntiguedad(antiguedad_anos, currentMonthName) {
-    const antiguedadKey = `${antiguedad_anos} años`;
-    const monthOnly = currentMonthName.split(' ')[0];
-    if (TABLA_ANTIGUEDAD[antiguedadKey] && TABLA_ANTIGUEDAD[antiguedadKey][monthOnly] !== undefined) {
-        return TABLA_ANTIGUEDAD[antiguedadKey][monthOnly];
-    }
-    console.warn(`No se encontró bonificación por antigüedad para ${antiguedadKey} en ${monthOnly}. Usando 0.`);
-    return 0;
+// Obtiene la bonificación por antigüedad según años
+function getBonificacionAntiguedad(antiguedad_anos) {
+    return TABLA_ANTIGUEDAD[antiguedad_anos] || 0;
 }
 // Función para ocultar todos los pasos de entrada
 function hideAllSteps() {
@@ -459,7 +554,7 @@ function recordAttendance() {
     const dayOfWeek = recordDayDate.getDay(); // 0 = Domingo, 1 = Lunes, ..., 6 = Sábado
 
     const valorHoraBase = getValorHoraBase(selectedCategory, currentMonthName);
-    const bonificacionPorAntiguedad = getBonificacionAntiguedad(selectedAntiguedad, currentMonthName);
+    const bonificacionPorAntiguedad = getBonificacionAntiguedad(selectedAntiguedad);
     if (valorHoraBase === undefined) {
         resultDisplay.textContent = `Error: No se encontraron datos salariales para la categoría ${selectedCategory} en el mes de ${currentMonthName}. Por favor, verifica la configuración.`;
         if (!isEditingMode) {
@@ -467,105 +562,32 @@ function recordAttendance() {
         }
         return;
     }
-    // --- Lógica de feriado ---
+    // Usar la nueva función de cálculo simplificada
     const feriado = isFeriado(recordDayDate);
-    let jornalDiario = 0;
-    let valorHoraNormalCalculado = 0; // Para guardar el valor de la hora normal predominante en la jornada
-    let horaNocturnaCalculada = 0; // Para guardar el valor de la hora nocturna predominante en la jornada
-    let horaExtraDiurnaCalculada = 0;
-    let horaExtraNocturnaCalculada = 0;
-    let feriadoDiurnoCalculado = 0;
-    let feriadoNocturnoCalculado = 0;
-
-    // Determine base hourly rates including shift-specific multipliers but before antiquity
-    let valorHoraBaseDiurna = valorHoraBase;
-    let valorHoraBaseNocturna20pct = valorHoraBase * 1.20; // Standard 20% night plus
-    let valorHoraBaseNocturna7pct = valorHoraBase * 1.07; // Art. 11 night plus
-
-    // --- Lógica de Sábados: Modifica los valores base si es sábado ---
-    if (dayOfWeek === 6) // Si es sábado (6)
-    {
-        if (selectedTurno === 'tarde') {
-            // "Sábado (14:00-21:00) $3,120.00+133% (convenio A.O.T.)~$7,286.40"
-            // This 133% is applied to the base diurnas rate
-            valorHoraBaseDiurna = valorHoraBase * (1 + 1.33);
-
-            // "Sábado (21:00-22:00) $3,744.00+153% adicional (convenio)~$9,472.32"
-            // This 153% is applied to the standard 20% nocturnal rate ($3,744.00 is 3,120 * 1.20)
-            valorHoraBaseNocturna20pct = (valorHoraBase * 1.20) * (1 + 1.53);
-            
-            // For Saturday Tarde, Art. 11 (7%) might not apply directly to the whole shift,
-            // or the 153% takes precedence for night hours. Assuming 153% replaces 7% for these specific hours.
-            valorHoraBaseNocturna7pct = 0; // Or define specific logic if 7% stacks/applies differently
-            
-        } else if (selectedTurno === 'noche') { // Assuming 'noche' starts at 22:00 or covers the later Saturday hours
-            // Your example: "$3,744.00+153% adicional (convenio)~$9,472.32"
-            // This implies the standard 20% nocturnal hour gets an additional 153% for Saturday night.
-            valorHoraBaseNocturna20pct = (valorHoraBase * 1.20) * (1 + 1.53);
-            valorHoraBaseNocturna7pct = 0; // Assuming 153% overrides/includes 7% for Saturday night
-            valorHoraBaseDiurna = 0; // A full night shift on Saturday would likely not use diurnal rates
-        }
-    }
-    // --- Fin Lógica Sábados ---
-
-
-    // Calculate final hour values by adding antiquity to the base values (which may already have shift/saturday bonuses)
-    let horaDiurnaConAntiguedad = valorHoraBaseDiurna + bonificacionPorAntiguedad;
-    let horaNocturna20pctConAntiguedad = valorHoraBaseNocturna20pct + bonificacionPorAntiguedad;
-    let horaNocturna7pctConAntiguedad = valorHoraBaseNocturna7pct + bonificacionPorAntiguedad;
-
-
-    switch (selectedTurno) {
-        case 'manana': // 06:00-14:00 (8 horas diurnas)
-            jornalDiario = JORNADA_HORAS * horaDiurnaConAntiguedad;
-            valorHoraNormalCalculado = horaDiurnaConAntiguedad;
-            horaNocturnaCalculada = horaNocturna20pctConAntiguedad; // Keep standard for general reference
-            break;
-        case 'tarde': // 14:00-22:00 (7 horas diurnas + 1 hora nocturna)
-            // Horas diurnas (14:00-21:00): 7 horas
-            let salarioDiurnoTarde = 7 * horaDiurnaConAntiguedad;
-
-            // Hora nocturna (21:00-22:00): 1 hora (usa 20% plus)
-            let salarioNocturnoTarde = 1 * horaNocturna20pctConAntiguedad;
-
-            jornalDiario = salarioDiurnoTarde + salarioNocturnoTarde;
-            valorHoraNormalCalculado = horaDiurnaConAntiguedad; // Predominant diurnal part
-            horaNocturnaCalculada = horaNocturna20pctConAntiguedad; // Predominant nocturnal part
-            break;
-        case 'noche': // 21:00-06:00 (8 horas nocturnas con 7% Art. 11)
-            jornalDiario = JORNADA_HORAS * horaNocturna7pctConAntiguedad;
-            valorHoraNormalCalculado = horaNocturna7pctConAntiguedad; // Aquí, "normal" es la nocturna con 7%
-            horaNocturnaCalculada = horaNocturna7pctConAntiguedad; // Explicitly for clarity
-            break;
-        default:
-            jornalDiario = 0;
-            break;
-    }
+    const turnoParaCalculo = feriado ? 'feriado' : selectedTurno;
     
-    // Recalculate extra/holiday rates based on the "calculated" base rates for the day
-    horaExtraDiurnaCalculada = valorHoraNormalCalculado * 1.50; // Use the value determined for "normal" jornada
-    horaExtraNocturnaCalculada = horaNocturnaCalculada * 1.50; // Use the value determined for "nocturna" jornada
-    feriadoDiurnoCalculado = valorHoraNormalCalculado * 2.00;
-    feriadoNocturnoCalculado = horaNocturnaCalculada * 2.00;
-
-
-    let salarioBrutoSinPresentismo = jornalDiario;
-    let extraHoursInfo = "";
-
-    if (extraHoursMade > 0) {
-        // Asumimos que las horas extras se cobran con la tarifa correspondiente al tipo de jornada predominante
-        // Si hay más complejidad (extras diurnas en turno noche, etc.), se necesitaría más lógica.
-        if (selectedTurno === 'noche' || (selectedTurno === 'tarde' && entryTime.getHours() >= 21) || (dayOfWeek === 6 && selectedTurno === 'noche')) {
-             salarioBrutoSinPresentismo += (extraHoursMade * horaExtraNocturnaCalculada);
-        } else {
-             salarioBrutoSinPresentismo += (extraHoursMade * horaExtraDiurnaCalculada);
-        }
-        extraHoursInfo = ` (+${extraHoursMade}hs extras)`;
-    }
-
+    let salarioBrutoSinPresentismo = calcularSalarioDiario(
+        turnoParaCalculo, 
+        valorHoraBase, 
+        bonificacionPorAntiguedad, 
+        dayOfWeek, 
+        extraHoursMade
+    );
+    
     // Presentismo calculation
-    let montoPresentismo = salarioBrutoSinPresentismo * 0.20; // Always 20% for calculation example
+    let montoPresentismo = salarioBrutoSinPresentismo * 0.20;
     let salarioDiarioBruto = salarioBrutoSinPresentismo + montoPresentismo;
+    
+    let extraHoursInfo = extraHoursMade > 0 ? ` (+${extraHoursMade}hs extras)` : "";
+    
+    // Valores para compatibilidad con el sistema existente
+    let valorHoraNormalCalculado = valorHoraBase;
+    let horaNocturnaCalculada = valorHoraBase * 1.3;
+    let horaExtraDiurnaCalculada = valorHoraBase * 1.5;
+    let horaExtraNocturnaCalculada = valorHoraBase * 1.3 * 1.5;
+    let feriadoDiurnoCalculado = (valorHoraBase + bonificacionPorAntiguedad) * 1.2;
+    let feriadoNocturnoCalculado = feriadoDiurnoCalculado;
+    let jornalDiario = salarioBrutoSinPresentismo;
 
 
     const formattedEntryTime = entryTime.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }).substring(0,5);
@@ -719,13 +741,18 @@ function generateCalendar() {
             const workedHoursSpan = document.createElement('span');
             workedHoursSpan.classList.add('worked-hours');
             workedHoursSpan.classList.add(record.turno);
-            if (record.turno === 'noche') {
-                // Siempre mostrar 22:00 a 06:00 para el turno noche
-                workedHoursSpan.textContent = `22:00 - 06:00 (+1 día) (${record.horas_trabajadas}hs)`;
-            } else {
-                let displayHours = `${record.entrada} - ${record.salida}`;
-                workedHoursSpan.textContent = `${displayHours} (${record.horas_trabajadas}hs)`;
+            
+            // Mostrar letra del turno en lugar de horarios
+            let turnoLetter = '';
+            switch(record.turno) {
+                case 'manana': turnoLetter = 'M'; break;
+                case 'tarde': turnoLetter = 'T'; break;
+                case 'noche': turnoLetter = 'N'; break;
+                case 'feriado': turnoLetter = 'F'; break;
+                default: turnoLetter = record.turno.charAt(0).toUpperCase();
             }
+            
+            workedHoursSpan.textContent = `${turnoLetter} (${record.horas_trabajadas}hs)`;
             dayElement.appendChild(workedHoursSpan);
             if (record.horas_extras > 0) {
                 const extraHoursSpan = document.createElement('span');
@@ -797,7 +824,7 @@ function applyScheduleToSelectedDays() {
         const dayOfWeek = entryTime.getDay();
         // Calcular valores base
         const valorHoraBase = TABLA_SALARIAL[categoria]?.[currentMonthName];
-        const bonificacionPorAntiguedad = getBonificacionAntiguedad(antiguedad, currentMonthName);
+        const bonificacionPorAntiguedad = getBonificacionAntiguedad(antiguedad);
         if (valorHoraBase === undefined) return;
         // Lógica de cálculo igual que en recordAttendance
         let valorHoraBaseDiurna = valorHoraBase;
@@ -1132,7 +1159,7 @@ function deleteRecord() {
 
 function generateAntiguedadOptions() {
     antiguedadOptionsContainer.innerHTML = '';
-    const years = Object.keys(TABLA_ANTIGUEDAD).map(key => parseInt(key.replace(' años', ''))).sort((a, b) => a - b);
+    const years = Object.keys(TABLA_ANTIGUEDAD).map(key => parseInt(key)).sort((a, b) => a - b);
 
     years.forEach(year => {
         const button = document.createElement('button');
@@ -1202,3 +1229,141 @@ if (localStorage.getItem('FERIADOS')) {
         FERIADOS.push(...guardados);
     }
 }
+
+// =================================================================
+// FUNCIONES PARA MODAL DE DÍAS MÚTIPLES
+// =================================================================
+
+function openMultiDayScheduleModal() {
+    if (selectedDates.length === 0) {
+        alert('Selecciona al menos un día en el calendario.');
+        return;
+    }
+    
+    document.getElementById('multi-day-selected-dates-display').textContent = selectedDates.length;
+    document.getElementById('multiDayScheduleModal').style.display = 'block';
+    
+    // Llenar select de antigüedad
+    const antiguedadSelect = document.getElementById('multi-antiguedad-select');
+    antiguedadSelect.innerHTML = '<option value="">Selecciona antigüedad</option>';
+    Object.keys(TABLA_ANTIGUEDAD).forEach(years => {
+        const option = document.createElement('option');
+        option.value = years;
+        option.textContent = `${years} años`;
+        antiguedadSelect.appendChild(option);
+    });
+}
+
+function closeMultiDayScheduleModal() {
+    document.getElementById('multiDayScheduleModal').style.display = 'none';
+}
+
+function clearSelectedDatesAndCloseModal() {
+    selectedDates = [];
+    generateCalendar();
+    updateSelectedDaysButton();
+    closeMultiDayScheduleModal();
+}
+
+function applyMultiDaySchedule() {
+    const turno = document.getElementById('multi-turno-select').value;
+    const categoria = document.getElementById('multi-category-select').value;
+    const antiguedad = parseInt(document.getElementById('multi-antiguedad-select').value);
+    const horaEntrada = document.getElementById('multi-entrada-input').value;
+    const horasExtras = parseInt(document.getElementById('multi-extra-hours-input').value) || 0;
+    
+    if (!turno || !categoria || !antiguedad || !horaEntrada) {
+        alert('Completa todos los campos requeridos.');
+        return;
+    }
+    
+    selectedDates.forEach(dateKey => {
+        const [year, month, day] = dateKey.split('-').map(Number);
+        const entryTime = new Date(year, month - 1, day, ...horaEntrada.split(':').map(Number));
+        const currentMonthName = MONTH_NAMES[entryTime.getMonth()];
+        const dayOfWeek = entryTime.getDay();
+        
+        const valorHoraBase = TABLA_SALARIAL[categoria]?.[currentMonthName];
+        const bonificacionPorAntiguedad = getBonificacionAntiguedad(antiguedad);
+        
+        if (valorHoraBase === undefined) return;
+        
+        const feriado = isFeriado(entryTime);
+        const turnoParaCalculo = feriado ? 'feriado' : turno;
+        
+        let salarioBrutoSinPresentismo = calcularSalarioDiario(
+            turnoParaCalculo, 
+            valorHoraBase, 
+            bonificacionPorAntiguedad, 
+            dayOfWeek, 
+            horasExtras
+        );
+        
+        let montoPresentismo = salarioBrutoSinPresentismo * 0.20;
+        let salarioDiarioBruto = salarioBrutoSinPresentismo + montoPresentismo;
+        
+        const standardTurnoTime = HORAS_ESTANDAR_INGRESO[turno];
+        const lateMinutes = calculateLateMinutes(entryTime, standardTurnoTime);
+        const isAbsentDueToLateness = lateMinutes > MINUTOS_TOLERANCIA_TARDE;
+        
+        // Valores para compatibilidad
+        let valorHoraNormalCalculado = valorHoraBase;
+        let horaNocturnaCalculada = valorHoraBase * 1.3;
+        let horaExtraDiurnaCalculada = valorHoraBase * 1.5;
+        let horaExtraNocturnaCalculada = valorHoraBase * 1.3 * 1.5;
+        let feriadoDiurnoCalculado = (valorHoraBase + bonificacionPorAntiguedad) * 1.2;
+        let feriadoNocturnoCalculado = feriadoDiurnoCalculado;
+        
+        saveWorkRecord(
+            new Date(year, month - 1, day), 
+            turno, 
+            JORNADA_HORAS, 
+            horasExtras, 
+            entryTime, 
+            categoria, 
+            antiguedad, 
+            valorHoraBase, 
+            bonificacionPorAntiguedad, 
+            salarioBrutoSinPresentismo, 
+            salarioDiarioBruto, 
+            lateMinutes, 
+            isAbsentDueToLateness, 
+            valorHoraNormalCalculado, 
+            horaNocturnaCalculada, 
+            horaExtraDiurnaCalculada, 
+            horaExtraNocturnaCalculada, 
+            feriadoDiurnoCalculado, 
+            feriadoNocturnoCalculado, 
+            dayOfWeek, 
+            montoPresentismo, 
+            feriado
+        );
+    });
+    
+    selectedDates = [];
+    generateCalendar();
+    calculateQuincenaTotal();
+    updateSelectedDaysButton();
+    closeMultiDayScheduleModal();
+    
+    resultDisplay.textContent = `¡Horario aplicado exitosamente a los días seleccionados!`;
+}
+
+function updateSelectedDaysButton() {
+    const button = document.getElementById('open-multi-day-modal-btn');
+    const countSpan = document.getElementById('selected-days-count');
+    
+    if (selectedDates.length > 0) {
+        button.style.display = 'block';
+        countSpan.textContent = selectedDates.length;
+    } else {
+        button.style.display = 'none';
+    }
+}
+
+// Actualizar la función toggleDaySelection para mostrar/ocultar el botón
+const originalToggleDaySelection = toggleDaySelection;
+toggleDaySelection = function(dateKey, dayElement) {
+    originalToggleDaySelection(dateKey, dayElement);
+    updateSelectedDaysButton();
+};

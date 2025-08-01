@@ -26,6 +26,7 @@ let usandoValorManual = false;
 // Elementos del DOM
 const valorHoraManualInput = document.getElementById('valor-hora-manual');
 const usarValorManualBtn = document.getElementById('usar-valor-manual');
+const cancelarValorManualBtn = document.getElementById('cancelar-valor-manual');
 const valorHoraMostrar = document.getElementById('valor-hora-mostrar');
 const msgValorManual = document.getElementById('msg-valor-manual');
 
@@ -49,15 +50,22 @@ const valoresHoraCat = {
 };
 
 /**
- * Tabla de valores de antigüedad por años y mes
+ * Tabla de valores de antigüedad por años (valores fijos)
  */
 const valoresAntiguedad = {
-    "junio":   {1:25, 3:37, 5:50, 7:68, 9:81, 12:108, 15:130, 18:152, 22:175, 26:198, 30:217, 35:238, 40:261},
-    "julio":   {1:27, 3:39, 5:53, 7:72, 9:86, 12:114, 15:138, 18:161, 22:186, 26:210, 30:230, 35:252, 40:277},
-    "agosto":  {1:27, 3:40, 5:54, 7:74, 9:88, 12:117, 15:142, 18:165, 22:190, 26:215, 30:235, 35:258, 40:283},
-    "septiembre": {1:28, 3:41, 5:56, 7:76, 9:91, 12:121, 15:146, 18:170, 22:196, 26:222, 30:243, 35:267, 40:292},
-    "octubre":  {1:28, 3:42, 5:57, 7:78, 9:93, 12:124, 15:150, 18:174, 22:200, 26:227, 30:248, 35:273, 40:298},
-    "noviembre": {1:29, 3:43, 5:58, 7:79, 9:95, 12:127, 15:153, 18:178, 22:204, 26:232, 30:253, 35:278, 40:304}
+    1: 25,
+    3: 37,
+    5: 50,
+    7: 68,
+    9: 81,
+    12: 108,
+    15: 130,
+    18: 152,
+    22: 175,
+    26: 198,
+    30: 217,
+    35: 238,
+    40: 261
 };
 
 // =================================================================
@@ -102,37 +110,7 @@ function actualizarValorHoraMostrar() {
     valorHoraMostrar.classList.add('animated-flash');
 }
 
-/**
- * Activa o desactiva el modo manual de valor hora
- * @param {boolean} activar - True para activar modo manual
- */
-function setModoManual(activar) {
-    usandoValorManual = activar;
-    
-    // Habilitar/deshabilitar selectores automáticos
-    document.querySelectorAll('.categoria-btn, .mes-btn').forEach(btn => {
-        btn.disabled = activar;
-        if (activar) {
-            btn.classList.add('disabled');
-        } else {
-            btn.classList.remove('disabled');
-        }
-    });
-    
-    // Los botones de antigüedad siempre están habilitados
-    document.querySelectorAll('.antiguedad-btn').forEach(btn => btn.disabled = false);
-    
-    // Configurar input manual y botón
-    valorHoraManualInput.disabled = false;
-    usarValorManualBtn.disabled = !(valorHoraManualInput.value && parseFloat(valorHoraManualInput.value) > 0);
-    
-    if (!activar) {
-        valorHoraManualInput.value = '';
-    }
-    
-    actualizarValorHoraMostrar();
-    calcularTotal();
-}
+
 
 /**
  * Muestra mensaje visual cuando se activa el valor hora manual
@@ -171,14 +149,98 @@ function mostrarMensajeValorManual() {
 // =================================================================
 
 /**
- * Obtiene el valor de antigüedad desde la tabla según años y mes
+ * Obtiene el valor de antigüedad desde la tabla según años
  * @param {number} anos - Años de antigüedad
- * @param {string} mes - Mes seleccionado
  * @returns {number} Valor fijo de antigüedad
  */
-function obtenerValorAntiguedad(anos, mes) {
-    if (!mes || !valoresAntiguedad[mes]) return 0;
-    return valoresAntiguedad[mes][anos] || 0;
+function obtenerValorAntiguedad(anos) {
+    return valoresAntiguedad[anos] || 0;
+}
+
+/**
+ * Calcula el monto para horas de sábado (100%)
+ * @param {number} horas - Cantidad de horas
+ * @param {number} valorHora - Valor base por hora
+ * @param {number} valorAntiguedad - Valor de antigüedad
+ * @returns {number} Monto calculado
+ */
+function calcularHorasSabado(horas, valorHora, valorAntiguedad) {
+    const base = valorHora + valorAntiguedad;
+    return horas * base * 1.2 * 2; // (base + 20%) * 2
+}
+
+/**
+ * Calcula el monto para horas nocturnas extras (50% o 100%)
+ * @param {number} horas - Cantidad de horas
+ * @param {number} valorHora - Valor base por hora
+ * @param {number} valorAntiguedad - Valor de antigüedad
+ * @param {number} multiplicador - 1.5 para 50%, 2 para 100%
+ * @returns {number} Monto calculado
+ */
+function calcularHorasNocturnasExtras(horas, valorHora, valorAntiguedad, multiplicador) {
+    const nocturnidad = valorHora * 0.3;
+    const subtotal = valorHora + valorAntiguedad + nocturnidad;
+    const baseFinal = subtotal * 1.2045; // + 20.45%
+    return horas * baseFinal * multiplicador;
+}
+
+/**
+ * Obtiene todos los valores de entrada de una vez
+ * @returns {Object} Objeto con todos los valores de entrada
+ */
+function obtenerValoresEntrada() {
+    return {
+        valorHora: obtenerValorHora(),
+        horasNormales: parseFloat(document.getElementById('horas-normales').value) || 0,
+        horasSabado: parseFloat(document.getElementById('horas-sabado').value) || 0,
+        horasNocturnas: parseFloat(document.getElementById('horas-nocturnas').value) || 0,
+        horas50: parseFloat(document.getElementById('horas-50').value) || 0,
+        horasNocturnas50: parseFloat(document.getElementById('horas-nocturnas-50').value) || 0,
+        horasNocturnas100: parseFloat(document.getElementById('horas-nocturnas-100').value) || 0,
+        horasFeriado: parseFloat(document.getElementById('horas-feriado').value) || 0,
+        presentismo: parseFloat(document.getElementById('presentismo').value) || 0,
+        adicionalPorcentaje: parseFloat(document.getElementById('adicional-basico').value) || 0,
+        antiguedadAnios: parseFloat(document.getElementById('antiguedad').value) || 0
+    };
+}
+
+
+
+/**
+ * Activa o desactiva el modo manual de valor hora
+ * @param {boolean} activar - True para activar modo manual
+ */
+function setModoManual(activar) {
+    usandoValorManual = activar;
+    
+    // Solo deshabilitar categoría y mes, NO antigüedad
+    document.querySelectorAll('.categoria-btn, .mes-btn').forEach(btn => {
+        btn.disabled = activar;
+        if (activar) {
+            btn.classList.add('disabled');
+            btn.classList.remove('active');
+        } else {
+            btn.classList.remove('disabled');
+        }
+    });
+    
+    // Configurar input manual y botones
+    valorHoraManualInput.disabled = false;
+    usarValorManualBtn.disabled = !(valorHoraManualInput.value && parseFloat(valorHoraManualInput.value) > 0);
+    
+    // Mostrar/ocultar botón cancelar
+    if (cancelarValorManualBtn) {
+        cancelarValorManualBtn.style.display = activar ? 'inline-block' : 'none';
+    }
+    
+    if (!activar) {
+        valorHoraManualInput.value = '';
+        document.getElementById('categoria').value = '';
+        document.getElementById('mes').value = '';
+    }
+    
+    actualizarValorHoraMostrar();
+    calcularTotal();
 }
 
 /**
@@ -186,103 +248,98 @@ function obtenerValorAntiguedad(anos, mes) {
  * Calcula el salario total basado en todos los parámetros ingresados
  */
 function calcularTotal() {
-    // Obtener valores de entrada
-    const valorHora = obtenerValorHora();
-    const horasNormales = parseFloat(document.getElementById('horas-normales').value) || 0;
-    const horasSabado = parseFloat(document.getElementById('horas-sabado').value) || 0;
-    const horasSabado50 = parseFloat(document.getElementById('horas-sabado-50').value) || 0;
-    const horasNocturnas = parseFloat(document.getElementById('horas-nocturnas').value) || 0;
-    const horasNocturnas50 = parseFloat(document.getElementById('horas-nocturnas-50').value) || 0;
-    const horasFeriado = parseFloat(document.getElementById('horas-feriado').value) || 0;
-    const presentismo = parseFloat(document.getElementById('presentismo').value) || 0;
-    const adicionalPorcentaje = parseFloat(document.getElementById('adicional-basico').value) || 0;
+    // Obtener todos los valores de entrada
+    const datos = obtenerValoresEntrada();
 
     // Validar que hay valor hora
-    if (valorHora <= 0) {
+    if (datos.valorHora <= 0) {
         document.getElementById('resultado-hora').innerHTML = 'Selecciona categoría y mes, o ingresa un valor hora manual';
         document.getElementById('desglose-hora').innerHTML = '';
         return;
     }
 
-    // Obtener valor fijo de antigüedad desde la tabla
-    const antiguedadAnios = parseFloat(document.getElementById('antiguedad').value) || 0;
-    const mes = document.getElementById('mes').value;
-    const valorAntiguedad = obtenerValorAntiguedad(antiguedadAnios, mes);
-    const valorHoraConAntiguedad = valorHora + valorAntiguedad;
-
     // Variables para el cálculo
     let total = 0;
     let desglose = [];
-    let montoNormales = 0;
-    let montoNocturnas = 0;
+    const valorAntiguedad = obtenerValorAntiguedad(datos.antiguedadAnios);
 
     // Calcular horas normales
-    if (horasNormales > 0) {
-        montoNormales = horasNormales * valorHoraConAntiguedad;
-        if (valorAntiguedad > 0) {
-            desglose.push(`Normales: ${horasNormales}h × ($${valorHora.toFixed(2)} + $${valorAntiguedad.toFixed(2)} antig.) = <b>$${montoNormales.toFixed(2)}</b>`);
-        } else {
-            desglose.push(`Normales: ${horasNormales}h × $${valorHoraConAntiguedad.toFixed(2)} = <b>$${montoNormales.toFixed(2)}</b>`);
-        }
+    let montoNormales = 0;
+    if (datos.horasNormales > 0) {
+        montoNormales = datos.horasNormales * datos.valorHora;
+        desglose.push(`<div class="desglose-item">Normales: ${datos.horasNormales}h × $${formatearNumero(datos.valorHora)} = <b>$${formatearNumero(montoNormales)}</b></div>`);
         total += montoNormales;
     }
 
-    // Calcular horas sábado 100%
-    if (horasSabado > 0) {
-        const base = valorHoraConAntiguedad;
-        const veintePorc = base * 0.2;
-        const baseConVeinte = base + veintePorc;
-        const valorHoraSabado100 = baseConVeinte * 2;
-        const monto = horasSabado * valorHoraSabado100;
-        desglose.push(`Sábado 100%: ${horasSabado}h × [(${base.toFixed(2)} + 20%) × 2] = <b>$${monto.toFixed(2)}</b>`);
-        total += monto;
-    }
-
-    // Calcular horas sábado 50%
-    if (horasSabado50 > 0) {
-        const monto = horasSabado50 * (valorHora * 1.5);
-        desglose.push(`Sábado 50%: ${horasSabado50}h × $${(valorHora * 1.5).toFixed(2)} = <b>$${monto.toFixed(2)}</b>`);
-        total += monto;
-    }
-
     // Calcular horas nocturnas
-    if (horasNocturnas > 0) {
-        montoNocturnas = horasNocturnas * (valorHora * 1.3);
-        desglose.push(`Nocturnas: ${horasNocturnas}h × $${(valorHora * 1.3).toFixed(2)} = <b>$${montoNocturnas.toFixed(2)}</b>`);
+    let montoNocturnas = 0;
+    if (datos.horasNocturnas > 0) {
+        montoNocturnas = datos.horasNocturnas * (datos.valorHora * 1.3);
+        desglose.push(`<div class="desglose-item">Nocturnas: ${datos.horasNocturnas}h × $${formatearNumero(datos.valorHora * 1.3)} = <b>$${formatearNumero(montoNocturnas)}</b></div>`);
         total += montoNocturnas;
+    }
+
+    // Calcular antigüedad sobre horas normales y nocturnas
+    const totalHorasBasicas = datos.horasNormales + datos.horasNocturnas;
+    if (totalHorasBasicas > 0 && valorAntiguedad > 0) {
+        const montoAntiguedad = totalHorasBasicas * valorAntiguedad;
+        desglose.push(`<div class="desglose-item">Antigüedad: ${totalHorasBasicas}h × $${formatearNumero(valorAntiguedad)} = <b>$${formatearNumero(montoAntiguedad)}</b></div>`);
+        total += montoAntiguedad;
     }
 
     // Calcular adicional sobre básico
     const sumaBase = montoNormales + montoNocturnas;
-    if (adicionalPorcentaje > 0 && sumaBase > 0) {
-        const adicionalBasico = sumaBase * (adicionalPorcentaje / 100);
-        desglose.push(`Adicional sobre básico (${adicionalPorcentaje}%): <b>$${adicionalBasico.toFixed(2)}</b>`);
+    if (datos.adicionalPorcentaje > 0 && sumaBase > 0) {
+        const adicionalBasico = sumaBase * (datos.adicionalPorcentaje / 100);
+        desglose.push(`<div class="desglose-item">Adicional sobre básico (${datos.adicionalPorcentaje}%) <span class="aprox-icon" title="Valor aproximado">~</span>: <b>$${formatearNumero(adicionalBasico)}</b></div>`);
         total += adicionalBasico;
     }
 
-    // Calcular horas nocturnas 50%
-    if (horasNocturnas50 > 0) {
-        const monto = horasNocturnas50 * (valorHora * 1.3);
-        desglose.push(`Nocturnas 50%: ${horasNocturnas50}h × $${(valorHora * 1.3).toFixed(2)} = <b>$${monto.toFixed(2)}</b>`);
+    // Calcular horas 100% (sábado)
+    if (datos.horasSabado > 0) {
+        const monto = calcularHorasSabado(datos.horasSabado, datos.valorHora, valorAntiguedad);
+        desglose.push(`<div class="desglose-item">Horas 100% (sábado): ${datos.horasSabado}h × [($${formatearNumero(datos.valorHora + valorAntiguedad)} + 20%) × 2] = <b>$${formatearNumero(monto)}</b></div>`);
         total += monto;
     }
 
-    // Calcular horas feriado
-    if (horasFeriado > 0) {
-        const monto = horasFeriado * valorHora;
-        desglose.push(`Feriado: ${horasFeriado}h × $${valorHora.toFixed(2)} = <b>$${monto.toFixed(2)}</b>`);
+    // Calcular horas nocturnas 50%
+    if (datos.horasNocturnas50 > 0) {
+        const monto = calcularHorasNocturnasExtras(datos.horasNocturnas50, datos.valorHora, valorAntiguedad, 1.5);
+        desglose.push(`<div class="desglose-item">Nocturnas 50% <span class="aprox-icon" title="Valor aproximado">~</span>: ${datos.horasNocturnas50}h × [Base + 20.45% + 50%] = <b>$${formatearNumero(monto)}</b></div>`);
+        total += monto;
+    }
+
+    // Calcular horas nocturnas 100%
+    if (datos.horasNocturnas100 > 0) {
+        const monto = calcularHorasNocturnasExtras(datos.horasNocturnas100, datos.valorHora, valorAntiguedad, 2);
+        desglose.push(`<div class="desglose-item">Nocturnas 100% <span class="aprox-icon" title="Valor aproximado">~</span>: ${datos.horasNocturnas100}h × [Base + 20.45% + 100%] = <b>$${formatearNumero(monto)}</b></div>`);
+        total += monto;
+    }
+
+    // Calcular horas de feriado
+    if (datos.horasFeriado > 0) {
+        const valorHoraFeriado = (datos.valorHora + valorAntiguedad) * 1.2;
+        const montoFeriado = datos.horasFeriado * valorHoraFeriado;
+        desglose.push(`<div class="desglose-item">Horas Feriado: ${datos.horasFeriado}h × $${formatearNumero(valorHoraFeriado)} = <b>$${formatearNumero(montoFeriado)}</b></div>`);
+        total += montoFeriado;
+    }
+
+    // Calcular horas al 50%
+    if (datos.horas50 > 0) {
+        const monto = datos.horas50 * datos.valorHora * 1.5;
+        desglose.push(`<div class="desglose-item">Horas 50%: ${datos.horas50}h × $${formatearNumero(datos.valorHora)} × 1.5 = <b>$${formatearNumero(monto)}</b></div>`);
         total += monto;
     }
 
     // Calcular presentismo
-    let montoPresentismo = total * presentismo;
-    if (presentismo > 0) {
-        desglose.push(`Presentismo (${(presentismo*100).toFixed(0)}%): <b>$${montoPresentismo.toFixed(2)}</b>`);
+    if (datos.presentismo > 0) {
+        const montoPresentismo = total * datos.presentismo;
+        desglose.push(`<div class="desglose-item presentismo-item">Presentismo (${(datos.presentismo*100).toFixed(0)}%): <b>$${formatearNumero(montoPresentismo)}</b></div>`);
         total += montoPresentismo;
     }
 
     // Mostrar resultados
-    document.getElementById('desglose-hora').innerHTML = desglose.length ? desglose.join('<br>') : '';
+    document.getElementById('desglose-hora').innerHTML = desglose.length ? desglose.join('') : '';
     document.getElementById('resultado-hora').innerHTML = `Total a cobrar: <b>$${total.toLocaleString('es-AR', {minimumFractionDigits:2, maximumFractionDigits:2})}</b>`;
 }
 
@@ -294,76 +351,39 @@ function calcularTotal() {
  * Configura los event listeners para los botones de selección
  */
 function configurarEventListeners() {
-    // Botones de categoría
-    const categoriaBtns = document.querySelectorAll('.categoria-btn');
-    categoriaBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            if (usandoValorManual) {
-                setModoManual(false);
-            }
-            
-            const input = document.getElementById('categoria');
-            if (btn.classList.contains('active')) {
-                btn.classList.remove('active');
-                input.value = '';
-            } else {
-                categoriaBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                input.value = btn.getAttribute('data-value');
-            }
-            actualizarValorHoraMostrar();
-            calcularTotal();
+    // Función genérica para manejar botones de selección
+    const configurarBotones = (selector, inputId, callback = null) => {
+        const botones = document.querySelectorAll(selector);
+        botones.forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (usandoValorManual && (selector.includes('categoria') || selector.includes('mes'))) {
+                    setModoManual(false);
+                }
+                
+                const input = document.getElementById(inputId);
+                if (btn.classList.contains('active')) {
+                    btn.classList.remove('active');
+                    input.value = '';
+                } else {
+                    botones.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    input.value = btn.getAttribute('data-value');
+                }
+                
+                actualizarValorHoraMostrar();
+                if (callback) callback();
+                calcularTotal();
+            });
         });
-    });
+    };
 
-    // Botones de mes
-    const mesBtns = document.querySelectorAll('.mes-btn');
-    mesBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            if (usandoValorManual) {
-                setModoManual(false);
-            }
-            
-            const input = document.getElementById('mes');
-            if (btn.classList.contains('active')) {
-                btn.classList.remove('active');
-                input.value = '';
-            } else {
-                mesBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                input.value = btn.getAttribute('data-value');
-            }
-            actualizarValorHoraMostrar();
-            mostrarTablaAntiguedad();
-            calcularTotal();
-        });
-    });
+    // Configurar todos los tipos de botones
+    configurarBotones('.categoria-btn', 'categoria');
+    configurarBotones('.mes-btn', 'mes', mostrarTablaAntiguedad);
+    configurarBotones('.antiguedad-btn', 'antiguedad', mostrarMontoAntiguedad);
+    configurarBotones('.presentismo-btn', 'presentismo');
 
-    // Botones de antigüedad
-    const antigBtns = document.querySelectorAll('.antiguedad-btn');
-    antigBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            antigBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            document.getElementById('antiguedad').value = btn.getAttribute('data-value');
-            actualizarValorHoraMostrar();
-            mostrarMontoAntiguedad();
-            calcularTotal();
-        });
-    });
 
-    // Botones de presentismo
-    const presentismoBtns = document.querySelectorAll('.presentismo-btn');
-    presentismoBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            presentismoBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            let valor = btn.getAttribute('data-value');
-            if (isNaN(valor) || valor === null) valor = '0';
-            document.getElementById('presentismo').value = valor;
-            calcularTotal();
-        });
-    });
 
     // Valor hora manual
     if (usarValorManualBtn && valorHoraManualInput) {
@@ -386,12 +406,19 @@ function configurarEventListeners() {
             }
         });
     }
+    
+    // Botón cancelar valor manual
+    if (cancelarValorManualBtn) {
+        cancelarValorManualBtn.addEventListener('click', () => {
+            setModoManual(false);
+        });
+    }
 
     // Inputs numéricos - recalcular automáticamente
     const inputsNumericos = [
-        'horas-normales', 'horas-sabado', 'horas-sabado-50',
-        'horas-nocturnas', 'horas-nocturnas-50', 'horas-feriado',
-        'adicional-basico'
+        'horas-normales', 'horas-sabado', 'horas-nocturnas',
+        'horas-50', 'horas-nocturnas-50', 'horas-nocturnas-100', 
+        'horas-feriado', 'adicional-basico'
     ];
     
     inputsNumericos.forEach(id => {
@@ -403,20 +430,18 @@ function configurarEventListeners() {
 }
 
 /**
- * Muestra la tabla de valores de antigüedad según el mes seleccionado
+ * Muestra la tabla de valores de antigüedad
  */
 function mostrarTablaAntiguedad() {
-    const mes = document.getElementById('mes').value;
-    const tabla = valoresAntiguedad[mes];
     const container = document.getElementById('tabla-antiguedad');
     
-    if (!tabla || !container) return;
+    if (!container) return;
     
     let html = '<table style="width:100%;border-collapse:collapse;background:#fff;border-radius:8px;box-shadow:0 1px 6px #1976d222;margin-top:8px;">';
     html += '<tr style="background:#e3eaf3;color:#1976d2;font-weight:bold;"><td style="padding:6px 8px;">Años</td><td style="padding:6px 8px;">Valor Hora Antigüedad</td></tr>';
     
-    Object.keys(tabla).forEach(anos => {
-        html += `<tr><td style='padding:4px 8px;text-align:center;'>${anos}</td><td style='padding:4px 8px;text-align:center;'>$${tabla[anos]}</td></tr>`;
+    Object.keys(valoresAntiguedad).forEach(anos => {
+        html += `<tr><td style='padding:4px 8px;text-align:center;'>${anos}</td><td style='padding:4px 8px;text-align:center;'>$${valoresAntiguedad[anos]}</td></tr>`;
     });
     
     html += '</table>';
@@ -428,12 +453,11 @@ function mostrarTablaAntiguedad() {
  */
 function mostrarMontoAntiguedad() {
     const antig = parseFloat(document.getElementById('antiguedad').value) || 0;
-    const mes = document.getElementById('mes').value;
-    const monto = obtenerValorAntiguedad(antig, mes);
+    const valorAntiguedad = obtenerValorAntiguedad(antig);
     
     const container = document.getElementById('tabla-antiguedad');
     if (container) {
-        container.innerHTML = `<div style='font-size:1.15em;color:#1976d2;font-weight:500;text-align:center;padding:8px;background:#f8f9fa;border-radius:8px;margin-top:8px;'>Antigüedad: <span style='color:#1976d2;font-weight:bold;'>$${monto.toFixed(2)}</span></div>`;
+        container.innerHTML = `<div style='font-size:1.15em;color:#1976d2;font-weight:500;text-align:center;padding:8px;background:#f8f9fa;border-radius:8px;margin-top:8px;'>Valor Antigüedad por Hora: <span style='color:#1976d2;font-weight:bold;'>$${valorAntiguedad.toFixed(2)}</span><br><small style='color:#666;'>Se multiplica por total de horas normales + nocturnas</small></div>`;
     }
 }
 
@@ -469,6 +493,19 @@ function inicializar() {
     actualizarValorHoraMostrar();
     calcularTotal();
     
+    // Configurar tooltips como modales
+    document.querySelectorAll('.tooltip-trigger').forEach(trigger => {
+        const tooltip = trigger.querySelector('.tooltip');
+        
+        if (tooltip) {
+            trigger.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                mostrarModal(tooltip.innerHTML);
+            });
+        }
+    });
+    
     console.log('Script de cálculo por horas inicializado correctamente');
 }
 
@@ -501,4 +538,87 @@ function formatearMoneda(amount) {
 function esNumeroPositivo(value) {
     const num = parseFloat(value);
     return !isNaN(num) && num >= 0;
+}
+
+/**
+ * Formatea un número para mostrar con separadores de miles
+ * @param {number} numero - Número a formatear
+ * @returns {string} Número formateado
+ */
+function formatearNumero(numero) {
+    return numero.toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+}
+
+/**
+ * Muestra un modal centrado con el contenido especificado
+ * @param {string} contenido - HTML del contenido a mostrar
+ */
+function mostrarModal(contenido) {
+    // Crear overlay
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 100000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    `;
+    
+    // Crear modal
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        background: #fffde7;
+        border: 2px solid #ffe082;
+        border-radius: 12px;
+        padding: 20px;
+        max-width: 400px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        position: relative;
+    `;
+    
+    // Botón cerrar
+    const btnCerrar = document.createElement('button');
+    btnCerrar.innerHTML = '×';
+    btnCerrar.style.cssText = `
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #666;
+    `;
+    
+    // Agregar contenido
+    modal.innerHTML = contenido;
+    modal.appendChild(btnCerrar);
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+    
+    // Cerrar modal
+    const cerrarModal = () => {
+        document.body.removeChild(overlay);
+    };
+    
+    btnCerrar.addEventListener('click', cerrarModal);
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) cerrarModal();
+    });
+    
+    // Cerrar con ESC
+    const handleEsc = (e) => {
+        if (e.key === 'Escape') {
+            cerrarModal();
+            document.removeEventListener('keydown', handleEsc);
+        }
+    };
+    document.addEventListener('keydown', handleEsc);
 }
