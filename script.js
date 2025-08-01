@@ -25,6 +25,8 @@ const inputHoraIngreso = document.getElementById('input-hora-ingreso');
 const stepSelectCategory = document.getElementById('step-select-category');
 const stepSelectAntiguedad = document.getElementById('step-select-antiguedad');
 const antiguedadOptionsContainer = document.getElementById('antiguedad-options');
+const stepAdicionalBasico = document.getElementById('step-adicional-basico');
+const inputAdicionalBasico = document.getElementById('input-adicional-basico');
 const stepExtraHours = document.getElementById('step-extra-hours');
 const extraHoursInputGroup = document.getElementById('extra-hours-input-group');
 const inputExtraHours = document.getElementById('input-extra-hours');
@@ -45,6 +47,7 @@ let selectedTurno = null;
 let entryTime = null;
 let selectedCategory = null;
 let selectedAntiguedad = null;
+let adicionalBasico = 0;
 let extraHoursMade = 0;
 
 let editingDateKey = null;
@@ -71,28 +74,28 @@ const MINUTOS_TOLERANCIA_TARDE = 15;
  */
 const TABLA_SALARIAL = {
     'A': {
-        'Junio': 2750, 'Julio': 2804, 'Agosto': 2858, 'Septiembre': 2912, 'Octubre': 2966, 'Noviembre': 3020
+        'junio': 2750, 'julio': 2804, 'agosto': 2858, 'septiembre': 2912, 'octubre': 2966, 'noviembre': 3020
     },
     'B': {
-        'Junio': 2800, 'Julio': 2855, 'Agosto': 2910, 'Septiembre': 2965, 'Octubre': 3020, 'Noviembre': 3074
+        'junio': 2800, 'julio': 2855, 'agosto': 2910, 'septiembre': 2965, 'octubre': 3020, 'noviembre': 3074
     },
     'C': {
-        'Junio': 2854, 'Julio': 2910, 'Agosto': 2966, 'Septiembre': 3022, 'Octubre': 3078, 'Noviembre': 3134
+        'junio': 2854, 'julio': 2910, 'agosto': 2966, 'septiembre': 3022, 'octubre': 3078, 'noviembre': 3134
     },
     'D': {
-        'Junio': 2905, 'Julio': 2962, 'Agosto': 3019, 'Septiembre': 3076, 'Octubre': 3133, 'Noviembre': 3190
+        'junio': 2905, 'julio': 2962, 'agosto': 3019, 'septiembre': 3076, 'octubre': 3133, 'noviembre': 3190
     },
     'E': {
-        'Junio': 2964, 'Julio': 3022, 'Agosto': 3080, 'Septiembre': 3138, 'Octubre': 3197, 'Noviembre': 3255
+        'junio': 2964, 'julio': 3022, 'agosto': 3080, 'septiembre': 3138, 'octubre': 3197, 'noviembre': 3255
     },
     'F': {
-        'Junio': 3021, 'Julio': 3080, 'Agosto': 3140, 'Septiembre': 3199, 'Octubre': 3258, 'Noviembre': 3317
+        'junio': 3021, 'julio': 3080, 'agosto': 3140, 'septiembre': 3199, 'octubre': 3258, 'noviembre': 3317
     },
     'G': {
-        'Junio': 3115, 'Julio': 3176, 'Agosto': 3237, 'Septiembre': 3298, 'Octubre': 3359, 'Noviembre': 3420
+        'junio': 3115, 'julio': 3176, 'agosto': 3237, 'septiembre': 3298, 'octubre': 3359, 'noviembre': 3420
     },
     'H': {
-        'Junio': 3182, 'Julio': 3245, 'Agosto': 3307, 'Septiembre': 3370, 'Octubre': 3432, 'Noviembre': 3494
+        'junio': 3182, 'julio': 3245, 'agosto': 3307, 'septiembre': 3370, 'octubre': 3432, 'noviembre': 3494
     }
 };
 
@@ -101,18 +104,18 @@ const TABLA_SALARIAL = {
  * Montos adicionales que no forman parte del salario básico
  */
 const SUMA_NO_REMUN = {
-    'Enero': 210000,
-    'Febrero': 210000,
-    'Marzo': 210000,
-    'Abril': 210000,
-    'Mayo': 210000,
-    'Junio': 315000, // 210000 + 105000
-    'Julio': 210000,
-    'Agosto': 210000,
-    'Septiembre': 210000,
-    'Octubre': 210000,
-    'Noviembre': 210000,
-    'Diciembre': 210000
+    'enero': 210000,
+    'febrero': 210000,
+    'marzo': 210000,
+    'abril': 210000,
+    'mayo': 210000,
+    'junio': 315000, // 210000 + 105000
+    'julio': 210000,
+    'agosto': 210000,
+    'septiembre': 210000,
+    'octubre': 210000,
+    'noviembre': 210000,
+    'diciembre': 210000
 };
 
 /**
@@ -149,8 +152,8 @@ const HORAS_ESTANDAR_INGRESO = {
  * Nombres de los meses en español
  */
 const MONTH_NAMES = [
-    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+    'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
 ];
 
 /**
@@ -167,103 +170,78 @@ const workRecords = JSON.parse(localStorage.getItem('workRecords')) || {};
  * Calcula el salario diario según el turno y día de la semana
  * Basado en el cuadro de turnos proporcionado
  */
-function calcularSalarioDiario(turno, valorHora, valorAntiguedad, dayOfWeek, extraHours = 0) {
-    let horasNormales = 0;
-    let horasNocturnas = 0;
-    let horasSabado100 = 0;
-    let horasNocturnas50 = 0;
-    let horasNocturnas100 = 0;
+function calcularSalarioDiario(turno, valorHora, valorAntiguedad, adicionalBasicoPct, dayOfWeek, extraHours = 0) {
+    const valorHoraConAdicional = valorHora + (valorHora * adicionalBasicoPct / 100);
+    let total = 0;
     
-    // Aplicar lógica según turno y día
     switch (turno) {
         case 'manana':
-            if (dayOfWeek === 6) { // Sábado
-                horasNormales = 7;
-                horasSabado100 = 1;
-            } else { // Lunes a Viernes
-                horasNormales = 8;
+            if (dayOfWeek === 6) {
+                // Sábado: 7 horas normales + 1 hora 100%
+                total += 7 * (valorHora + valorAntiguedad) * 1.2;
+                const base = valorHora + valorAntiguedad;
+                total += 1 * base * 1.2 * 2;
+                // Aplicar adicional sobre el total
+                if (adicionalBasicoPct > 0) {
+                    total += total * (adicionalBasicoPct / 100);
+                }
+            } else {
+                // Lunes a viernes: (valorHora + antigüedad) × 8 × 1.2
+                total = ((valorHora + valorAntiguedad) * 8) * 1.2;
+                // Aplicar adicional sobre el total
+                if (adicionalBasicoPct > 0) {
+                    total += total * (adicionalBasicoPct / 100);
+                }
             }
             break;
             
         case 'tarde':
-            if (dayOfWeek === 6) { // Sábado
-                horasSabado100 = 7;
-                horasNocturnas100 = 1;
-            } else { // Lunes a Viernes
-                horasNormales = 7;
-                horasNocturnas = 1;
+            if (dayOfWeek === 6) {
+                // Sábado: 7 horas 100% + 1 hora nocturna 100%
+                const base = valorHoraConAdicional + valorAntiguedad;
+                total += 7 * base * 1.2 * 2;
+                const nocturnidad = valorHoraConAdicional * 0.3;
+                const subtotal = valorHoraConAdicional + valorAntiguedad + nocturnidad;
+                const baseFinal = subtotal * 1.2045;
+                total += 1 * baseFinal * 2;
+            } else {
+                // 7 horas normales + 1 hora nocturna
+                total += 7 * (valorHoraConAdicional + valorAntiguedad) * 1.2;
+                total += 1 * (valorHoraConAdicional * 1.3 + valorAntiguedad) * 1.2;
             }
             break;
             
         case 'noche':
-            if (dayOfWeek === 0) { // Domingo
-                horasNocturnas = 6;
-                horasNocturnas100 = 2;
-            } else { // Lunes a Viernes
-                horasNocturnas = 7;
-                horasNocturnas50 = 1;
+            if (dayOfWeek === 0) {
+                // Domingo: 6 horas nocturnas + 2 horas nocturnas 100%
+                total += 6 * (valorHoraConAdicional * 1.3 + valorAntiguedad) * 1.2;
+                const nocturnidad = valorHoraConAdicional * 0.3;
+                const subtotal = valorHoraConAdicional + valorAntiguedad + nocturnidad;
+                const baseFinal = subtotal * 1.2045;
+                total += 2 * baseFinal * 2;
+            } else {
+                // 7 horas nocturnas + 1 hora nocturna 50%
+                total += 7 * (valorHoraConAdicional * 1.3 + valorAntiguedad) * 1.2;
+                const nocturnidad = valorHoraConAdicional * 0.3;
+                const subtotal = valorHoraConAdicional + valorAntiguedad + nocturnidad;
+                const baseFinal = subtotal * 1.2045;
+                total += 1 * baseFinal * 1.5;
             }
             break;
             
         case 'feriado':
-            horasNormales = 8; // 8 horas normales en feriado
+            const valorHoraFeriado = (valorHoraConAdicional + valorAntiguedad) * 1.2;
+            total = 8 * valorHoraFeriado;
             break;
     }
     
-    // Calcular montos
-    let total = 0;
-    
-    // Horas normales
-    if (horasNormales > 0) {
-        total += horasNormales * valorHora;
-    }
-    
-    // Horas nocturnas (30% adicional)
-    if (horasNocturnas > 0) {
-        total += horasNocturnas * (valorHora * 1.3);
-    }
-    
-    // Antigüedad sobre horas normales y nocturnas
-    const totalHorasBasicas = horasNormales + horasNocturnas;
-    if (totalHorasBasicas > 0 && valorAntiguedad > 0) {
-        total += totalHorasBasicas * valorAntiguedad;
-    }
-    
-    // Horas 100% (sábado)
-    if (horasSabado100 > 0) {
-        const base = valorHora + valorAntiguedad;
-        const valorHoraSabado100 = base * 1.2 * 2; // (base + 20%) * 2
-        total += horasSabado100 * valorHoraSabado100;
-    }
-    
-    // Horas nocturnas 50%
-    if (horasNocturnas50 > 0) {
-        const nocturnidad = valorHora * 0.3;
-        const subtotal = valorHora + valorAntiguedad + nocturnidad;
-        const baseFinal = subtotal * 1.2045; // + 20.45%
-        const valorFinal = baseFinal * 1.5; // + 50%
-        total += horasNocturnas50 * valorFinal;
-    }
-    
-    // Horas nocturnas 100%
-    if (horasNocturnas100 > 0) {
-        const nocturnidad = valorHora * 0.3;
-        const subtotal = valorHora + valorAntiguedad + nocturnidad;
-        const baseFinal = subtotal * 1.2045; // + 20.45%
-        const valorFinal = baseFinal * 2; // + 100%
-        total += horasNocturnas100 * valorFinal;
-    }
-    
-    // Horas extras (simplificado)
+    // Horas extras
     if (extraHours > 0) {
-        const valorHoraExtra = (turno === 'noche') ? valorHora * 1.3 * 1.5 : valorHora * 1.5;
-        total += extraHours * valorHoraExtra;
-    }
-    
-    // Si es feriado, duplicar el total
-    if (turno === 'feriado') {
-        const valorHoraFeriado = (valorHora + valorAntiguedad) * 1.2;
-        total = 8 * valorHoraFeriado;
+        if (turno === 'noche') {
+            total += extraHours * (valorHoraConAdicional + valorAntiguedad) * 1.3 * 1.5;
+        } else {
+            total += extraHours * (valorHoraConAdicional + valorAntiguedad) * 1.5;
+        }
     }
     
     return total;
@@ -295,6 +273,7 @@ function hideAllSteps() {
     stepInputHora.style.display = 'none';
     stepSelectCategory.style.display = 'none';
     stepSelectAntiguedad.style.display = 'none';
+    stepAdicionalBasico.style.display = 'none';
     stepExtraHours.style.display = 'none';
     extraHoursInputGroup.style.display = 'none';
     editingMessage.style.display = 'none';
@@ -308,10 +287,12 @@ function resetInterface() {
     entryTime = null;
     selectedCategory = null;
     selectedAntiguedad = null;
+    adicionalBasico = 0;
     extraHoursMade = 0;
     isEditingMode = false;
     editingDateKey = null;
     inputHoraIngreso.value = '';
+    inputAdicionalBasico.value = '';
     inputExtraHours.value = '1';
     resultDisplay.textContent = 'Selecciona un día en el calendario o tu turno para empezar un nuevo registro.';
     deleteRecordBtn.style.display = 'none';
@@ -389,11 +370,24 @@ function selectCategory(category) {
 function selectAntiguedad(anos) {
     selectedAntiguedad = anos;
     hideAllSteps();
-    stepExtraHours.style.display = 'block';
-    resultDisplay.textContent = `Antigüedad seleccionada: ${anos} años. ¿Realizaste horas extras?`;
+    stepAdicionalBasico.style.display = 'block';
+    resultDisplay.textContent = `Antigüedad seleccionada: ${anos} años. Ahora ingresa tu adicional sobre básico.`;
 }
 
-//------------------------------------------------------ Función para manejar las horas extras (Paso 5)------------------------------------------------------
+// ------------------------------------------------------Función para seleccionar el adicional sobre básico (Paso 5)------------------------------------------------------
+function selectAdicionalBasico() {
+    const valor = parseFloat(inputAdicionalBasico.value);
+    if (isNaN(valor) || valor < 0) {
+        alert('Por favor, ingresa un porcentaje válido (0 o mayor).');
+        return;
+    }
+    adicionalBasico = valor;
+    hideAllSteps();
+    stepExtraHours.style.display = 'block';
+    resultDisplay.textContent = `Adicional sobre básico: ${valor}%. ¿Realizaste horas extras?`;
+}
+
+//------------------------------------------------------ Función para manejar las horas extras (Paso 6)------------------------------------------------------
 function handleExtraHours(hasExtras) {
     if (hasExtras) {
         extraHoursInputGroup.style.display = 'block';
@@ -541,7 +535,7 @@ function recordAttendance() {
         recordDayDate = entryTime || new Date();
     }
     
-    if (!selectedTurno || !selectedCategory || !selectedAntiguedad || !entryTime) {
+    if (!selectedTurno || !selectedCategory || !selectedAntiguedad || adicionalBasico === null || !entryTime) {
         resultDisplay.textContent = 'Error: Faltan datos para el registro. Por favor, completa todos los pasos.';
         if (!isEditingMode) {
             resetInterface();
@@ -570,6 +564,7 @@ function recordAttendance() {
         turnoParaCalculo, 
         valorHoraBase, 
         bonificacionPorAntiguedad, 
+        adicionalBasico,
         dayOfWeek, 
         extraHoursMade
     );
@@ -1118,6 +1113,7 @@ function editDayRecord(dateKey) {
         entryTime = new Date(year, month - 1, day, recordedHours, recordedMinutes, 0);
         selectedCategory = record.category;
         selectedAntiguedad = record.antiguedad_anos;
+        adicionalBasico = record.adicional_basico || 0;
         extraHoursMade = record.horas_extras;
         deleteRecordBtn.style.display = 'block'; // Mostrar botón eliminar
         deleteRecordBtn.onclick = deleteRecord; // Asegurar funcionalidad
@@ -1128,8 +1124,10 @@ function editDayRecord(dateKey) {
         entryTime = null;
         selectedCategory = null;
         selectedAntiguedad = null;
+        adicionalBasico = 0;
         extraHoursMade = 0;
         inputHoraIngreso.value = '';
+        inputAdicionalBasico.value = '';
         inputExtraHours.value = '1';
         deleteRecordBtn.style.display = 'none';
         resultDisplay.textContent = `Agregando registro para el ${displayDate.toLocaleDateString('es-AR')}.`;
@@ -1203,7 +1201,7 @@ function getDateKey(date) {
 
 // Helper para obtener valor salarial y suma no remunerativa por mes simple
 function getValorHoraBase(category, currentMonthName) {
-    return TABLA_SALARIAL[category]?.[currentMonthName];
+    return TABLA_SALARIAL[category]?.[currentMonthName.toLowerCase()];
 }
 function getSumaNoRemunerativa(currentMonthName) {
     return SUMA_NO_REMUN[currentMonthName] || 0;
@@ -1295,6 +1293,7 @@ function applyMultiDaySchedule() {
             turnoParaCalculo, 
             valorHoraBase, 
             bonificacionPorAntiguedad, 
+            adicionalBasico,
             dayOfWeek, 
             horasExtras
         );

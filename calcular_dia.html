@@ -80,6 +80,14 @@
             <p>Selecciona tus Años de Antigüedad:</p>
             <div id="antiguedad-options" class="btn-group"></div>
         </div>
+        <div id="step-adicional-basico" class="step-box" style="display:none;">
+            <p>Ingresa el porcentaje de tu adicional sobre básico:</p>
+            <div class="input-group">
+                <input type="number" id="input-adicional-basico" min="0" max="100" step="0.1" placeholder="Ej: 15.5">
+                <span>%</span>
+                <button onclick="selectAdicionalBasico()">Confirmar</button>
+            </div>
+        </div>
         <div id="step-extra-hours" class="step-box" style="display: none;">
             <p>¿Realizaste horas extras hoy?</p>
             <div class="btn-group">

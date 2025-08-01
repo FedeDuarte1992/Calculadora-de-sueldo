@@ -338,9 +338,26 @@ function calcularTotal() {
         total += montoPresentismo;
     }
 
+    // Calcular total a cobrar (total sin retenciones menos 20%)
+    const totalACobrar = total * 0.8;
+    
+    // Obtener valor del bono
+    const bono = parseFloat(document.getElementById('bono').value) || 0;
+    const totalConBono = totalACobrar + bono;
+    
     // Mostrar resultados
     document.getElementById('desglose-hora').innerHTML = desglose.length ? desglose.join('') : '';
-    document.getElementById('resultado-hora').innerHTML = `Total a cobrar: <b>$${total.toLocaleString('es-AR', {minimumFractionDigits:2, maximumFractionDigits:2})}</b>`;
+    
+    let resultadoHTML = `
+        Total sin retenciones: <b>$${total.toLocaleString('es-AR', {minimumFractionDigits:2, maximumFractionDigits:2})}</b><br>
+        Total a cobrar: <b>$${totalACobrar.toLocaleString('es-AR', {minimumFractionDigits:2, maximumFractionDigits:2})}</b>
+    `;
+    
+    if (bono > 0) {
+        resultadoHTML += `<br>Total con bono: <b>$${totalConBono.toLocaleString('es-AR', {minimumFractionDigits:2, maximumFractionDigits:2})}</b>`;
+    }
+    
+    document.getElementById('resultado-hora').innerHTML = resultadoHTML;
 }
 
 // =================================================================
@@ -382,6 +399,7 @@ function configurarEventListeners() {
     configurarBotones('.mes-btn', 'mes', mostrarTablaAntiguedad);
     configurarBotones('.antiguedad-btn', 'antiguedad', mostrarMontoAntiguedad);
     configurarBotones('.presentismo-btn', 'presentismo');
+    configurarBotones('.bono-btn', 'bono');
 
 
 
@@ -486,6 +504,12 @@ function inicializar() {
     const primerPresentismoBtn = document.querySelector('.presentismo-btn');
     if (primerPresentismoBtn) {
         primerPresentismoBtn.classList.add('active');
+    }
+    
+    // Activar primer botón de bono por defecto
+    const primerBonoBtn = document.querySelector('.bono-btn');
+    if (primerBonoBtn) {
+        primerBonoBtn.classList.add('active');
     }
     
     // Configurar modo inicial
