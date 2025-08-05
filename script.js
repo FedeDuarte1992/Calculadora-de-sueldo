@@ -170,81 +170,348 @@ const workRecords = JSON.parse(localStorage.getItem('workRecords')) || {};
  * Calcula el salario diario según el turno y día de la semana
  * Basado en el cuadro de turnos proporcionado
  */
+/**
+ * FUNCIÓN PRINCIPAL DE CÁLCULO DE SALARIO DIARIO
+ * Usa exactamente las mismas fórmulas que calcular_hora.js
+ */
 function calcularSalarioDiario(turno, valorHora, valorAntiguedad, adicionalBasicoPct, dayOfWeek, extraHours = 0) {
-    const valorHoraConAdicional = valorHora + (valorHora * adicionalBasicoPct / 100);
-    let total = 0;
+    // Determinar horas según turno
+    const horas = obtenerHorasPorTurno(turno, dayOfWeek);
+    
+    // Usar la misma función de cálculo que calcular_hora
+    const datos = {
+        valorHora: valorHora,
+        horasNormales: horas.normales,
+        horasNocturnas: horas.nocturnas,
+        horasSabado: horas.sabado,
+        horasNocturnas50: horas.nocturnas50,
+        horasNocturnas100: horas.nocturnas100,
+        horasFeriado: horas.feriado,
+        horas50: extraHours, // Horas extras como horas al 50%
+        presentismo: 0.20, // 20% automático
+        adicionalPorcentaje: adicionalBasicoPct,
+        antiguedadAnios: obtenerAniosAntiguedad(valorAntiguedad)
+    };
+    
+    return calcularTotalComoHora(datos);
+}
+
+/**
+ * Determina las horas según turno y día (igual que calcular_hora)
+ */
+function obtenerHorasPorTurno(turno, dayOfWeek) {
+    const horas = {
+        normales: 0,
+        nocturnas: 0,
+        sabado: 0,
+        nocturnas50: 0,
+        nocturnas100: 0,
+        feriado: 0
+    };
     
     switch (turno) {
         case 'manana':
             if (dayOfWeek === 6) {
-                // Sábado: 7 horas normales + 1 hora 100%
-                total += 7 * (valorHora + valorAntiguedad) * 1.2;
-                const base = valorHora + valorAntiguedad;
-                total += 1 * base * 1.2 * 2;
-                // Aplicar adicional sobre el total
-                if (adicionalBasicoPct > 0) {
-                    total += total * (adicionalBasicoPct / 100);
-                }
+                horas.normales = 7;
+                horas.sabado = 1;
             } else {
-                // Lunes a viernes: (valorHora + antigüedad) × 8 × 1.2
-                total = ((valorHora + valorAntiguedad) * 8) * 1.2;
-                // Aplicar adicional sobre el total
-                if (adicionalBasicoPct > 0) {
-                    total += total * (adicionalBasicoPct / 100);
-                }
+                horas.normales = 8;
             }
             break;
             
         case 'tarde':
             if (dayOfWeek === 6) {
-                // Sábado: 7 horas 100% + 1 hora nocturna 100%
-                const base = valorHoraConAdicional + valorAntiguedad;
-                total += 7 * base * 1.2 * 2;
-                const nocturnidad = valorHoraConAdicional * 0.3;
-                const subtotal = valorHoraConAdicional + valorAntiguedad + nocturnidad;
-                const baseFinal = subtotal * 1.2045;
-                total += 1 * baseFinal * 2;
+                horas.sabado = 7;
+                horas.nocturnas100 = 1;
             } else {
-                // 7 horas normales + 1 hora nocturna
-                total += 7 * (valorHoraConAdicional + valorAntiguedad) * 1.2;
-                total += 1 * (valorHoraConAdicional * 1.3 + valorAntiguedad) * 1.2;
+                horas.normales = 7;
+                horas.nocturnas = 1;
             }
             break;
             
         case 'noche':
             if (dayOfWeek === 0) {
-                // Domingo: 6 horas nocturnas + 2 horas nocturnas 100%
-                total += 6 * (valorHoraConAdicional * 1.3 + valorAntiguedad) * 1.2;
-                const nocturnidad = valorHoraConAdicional * 0.3;
-                const subtotal = valorHoraConAdicional + valorAntiguedad + nocturnidad;
-                const baseFinal = subtotal * 1.2045;
-                total += 2 * baseFinal * 2;
+                horas.nocturnas = 6;
+                horas.nocturnas100 = 2;
             } else {
-                // 7 horas nocturnas + 1 hora nocturna 50%
-                total += 7 * (valorHoraConAdicional * 1.3 + valorAntiguedad) * 1.2;
-                const nocturnidad = valorHoraConAdicional * 0.3;
-                const subtotal = valorHoraConAdicional + valorAntiguedad + nocturnidad;
-                const baseFinal = subtotal * 1.2045;
-                total += 1 * baseFinal * 1.5;
+                horas.nocturnas = 7;
+                horas.nocturnas50 = 1;
             }
             break;
             
         case 'feriado':
-            const valorHoraFeriado = (valorHoraConAdicional + valorAntiguedad) * 1.2;
-            total = 8 * valorHoraFeriado;
+            horas.feriado = 8;
             break;
     }
     
-    // Horas extras
-    if (extraHours > 0) {
-        if (turno === 'noche') {
-            total += extraHours * (valorHoraConAdicional + valorAntiguedad) * 1.3 * 1.5;
-        } else {
-            total += extraHours * (valorHoraConAdicional + valorAntiguedad) * 1.5;
+    return horas;
+}
+
+/**
+ * Obtiene años de antigüedad desde el valor
+ */
+function obtenerAniosAntiguedad(valorAntiguedad) {
+    for (const [anos, valor] of Object.entries(TABLA_ANTIGUEDAD)) {
+        if (valor === valorAntiguedad) {
+            return parseInt(anos);
         }
+    }
+    return 0;
+}
+
+/**
+ * CÁLCULO TOTAL USANDO LAS MISMAS FÓRMULAS QUE CALCULAR_HORA
+ */
+function calcularTotalComoHora(datos) {
+    let total = 0;
+    const valorAntiguedad = TABLA_ANTIGUEDAD[datos.antiguedadAnios] || 0;
+    
+    // Calcular horas normales
+    let montoNormales = 0;
+    if (datos.horasNormales > 0) {
+        montoNormales = datos.horasNormales * datos.valorHora;
+        total += montoNormales;
+    }
+    
+    // Calcular horas nocturnas
+    let montoNocturnas = 0;
+    if (datos.horasNocturnas > 0) {
+        montoNocturnas = datos.horasNocturnas * (datos.valorHora * 1.3);
+        total += montoNocturnas;
+    }
+    
+    // Calcular antigüedad sobre horas normales y nocturnas
+    const totalHorasBasicas = datos.horasNormales + datos.horasNocturnas;
+    if (totalHorasBasicas > 0 && valorAntiguedad > 0) {
+        const montoAntiguedad = totalHorasBasicas * valorAntiguedad;
+        total += montoAntiguedad;
+    }
+    
+    // Calcular adicional sobre básico
+    const sumaBase = montoNormales + montoNocturnas;
+    if (datos.adicionalPorcentaje > 0 && sumaBase > 0) {
+        const adicionalBasico = sumaBase * (datos.adicionalPorcentaje / 100);
+        total += adicionalBasico;
+    }
+    
+    // Calcular horas 100% (sábado)
+    if (datos.horasSabado > 0) {
+        const base = datos.valorHora + valorAntiguedad;
+        const monto = datos.horasSabado * base * 1.2 * 2;
+        total += monto;
+    }
+    
+    // Calcular horas nocturnas 50%
+    if (datos.horasNocturnas50 > 0) {
+        const nocturnidad = datos.valorHora * 0.3;
+        const subtotal = datos.valorHora + valorAntiguedad + nocturnidad;
+        const baseFinal = subtotal * 1.2045;
+        const monto = datos.horasNocturnas50 * baseFinal * 1.5;
+        total += monto;
+    }
+    
+    // Calcular horas nocturnas 100%
+    if (datos.horasNocturnas100 > 0) {
+        const nocturnidad = datos.valorHora * 0.3;
+        const subtotal = datos.valorHora + valorAntiguedad + nocturnidad;
+        const baseFinal = subtotal * 1.2045;
+        const monto = datos.horasNocturnas100 * baseFinal * 2;
+        total += monto;
+    }
+    
+    // Calcular horas de feriado
+    if (datos.horasFeriado > 0) {
+        const valorHoraFeriado = (datos.valorHora + valorAntiguedad) * 1.2;
+        const montoFeriado = datos.horasFeriado * valorHoraFeriado;
+        total += montoFeriado;
+    }
+    
+    // Calcular horas al 50% (extras)
+    if (datos.horas50 > 0) {
+        const monto = datos.horas50 * datos.valorHora * 1.5;
+        total += monto;
+    }
+    
+    // Calcular presentismo
+    if (datos.presentismo > 0) {
+        const montoPresentismo = total * datos.presentismo;
+        total += montoPresentismo;
+    }
+    
+    // Generar desglose para mostrar en UI
+    let detallesHTML = '<strong>Total sin retenciones:</strong> $' + formatCurrency(total) + '<br>';
+    detallesHTML += '<strong>Total a cobrar:</strong> $' + formatCurrency(total * 0.8) + '<br><br>';
+    
+    if (datos.horasNormales > 0) detallesHTML += `Normales: ${datos.horasNormales}h × $${formatCurrency(datos.valorHora)} = $${formatCurrency(montoNormales)}<br>`;
+    if (datos.horasNocturnas > 0) detallesHTML += `Nocturnas: ${datos.horasNocturnas}h × $${formatCurrency(datos.valorHora * 1.3)} = $${formatCurrency(montoNocturnas)}<br>`;
+    if (totalHorasBasicas > 0 && valorAntiguedad > 0) detallesHTML += `Antigüedad: ${totalHorasBasicas}h × $${formatCurrency(valorAntiguedad)} = $${formatCurrency(totalHorasBasicas * valorAntiguedad)}<br>`;
+    if (datos.adicionalPorcentaje > 0) detallesHTML += `Adicional sobre básico (${datos.adicionalPorcentaje}%) ~: $${formatCurrency(sumaBase * (datos.adicionalPorcentaje / 100))}<br>`;
+    if (datos.presentismo > 0) detallesHTML += `Presentismo (${(datos.presentismo*100).toFixed(0)}%): $${formatCurrency(total * datos.presentismo / (1 + datos.presentismo))}`;
+    
+    // Actualizar el contenedor de detalles
+    const detailsContainer = document.getElementById('calculation-details');
+    if (detailsContainer) {
+        detailsContainer.innerHTML = detallesHTML;
+    }
+    
+    // Mostrar botón de detalles
+    const toggleBtn = document.getElementById('toggle-details-btn');
+    if (toggleBtn) {
+        toggleBtn.style.display = 'block';
+    }
+    
+    return total * 0.8; // Retorna total a cobrar (sin retenciones)
+}
+
+/**
+ * TURNO MAÑANA - Lunes a Viernes: 8hs normales | Sábados: 7hs normales + 1h al 100%
+ */
+function calcularTurnoManana(valorHora, valorAntiguedad, adicionalBasicoPct, dayOfWeek, desglose) {
+    let total = 0;
+    
+    if (dayOfWeek === 6) { // SÁBADO
+        // 7 horas normales: (valorHora + antigüedad) × 7 × 1.2
+        const horasNormales = (valorHora + valorAntiguedad) * 7 * 1.2;
+        total += horasNormales;
+        desglose.push(`7h normales sábado: (${valorHora} + ${valorAntiguedad}) × 7 × 1.2 = $${formatCurrency(horasNormales)}`);
+        
+        // 1 hora al 100%: (valorHora + antigüedad) × 1.2 × 2
+        const hora100 = (valorHora + valorAntiguedad) * 1.2 * 2;
+        total += hora100;
+        desglose.push(`1h al 100%: (${valorHora} + ${valorAntiguedad}) × 1.2 × 2 = $${formatCurrency(hora100)}`);
+        
+    } else { // LUNES A VIERNES
+        // 8 horas normales: (valorHora + antigüedad) × 8 × 1.2
+        total = (valorHora + valorAntiguedad) * 8 * 1.2;
+        desglose.push(`8h normales: (${valorHora} + ${valorAntiguedad}) × 8 × 1.2 = $${formatCurrency(total)}`);
+    }
+    
+    // Aplicar adicional sobre básico al total
+    if (adicionalBasicoPct > 0) {
+        const adicional = total * (adicionalBasicoPct / 100);
+        total += adicional;
+        desglose.push(`Adicional ${adicionalBasicoPct}%: $${formatCurrency(adicional)}`);
     }
     
     return total;
+}
+
+/**
+ * TURNO TARDE - Lunes a Viernes: 7hs normales + 1h nocturna | Sábados: 7hs al 100% + 1h nocturna al 100%
+ */
+function calcularTurnoTarde(valorHora, valorAntiguedad, adicionalBasicoPct, dayOfWeek, desglose) {
+    let total = 0;
+    
+    if (dayOfWeek === 6) { // SÁBADO
+        // 7 horas al 100%: (valorHora + antigüedad) × 1.2 × 2 × 7
+        const horas100 = (valorHora + valorAntiguedad) * 1.2 * 2 * 7;
+        total += horas100;
+        desglose.push(`7h al 100% sábado: (${valorHora} + ${valorAntiguedad}) × 1.2 × 2 × 7 = $${formatCurrency(horas100)}`);
+        
+        // 1 hora nocturna al 100%: [(valorHora + antigüedad + nocturnidad) × 1.2045] × 2
+        const nocturnidad = valorHora * 0.3;
+        const subtotal = valorHora + valorAntiguedad + nocturnidad;
+        const horaNocturna100 = subtotal * 1.2045 * 2;
+        total += horaNocturna100;
+        desglose.push(`1h nocturna 100%: [(${valorHora} + ${valorAntiguedad} + ${nocturnidad.toFixed(2)}) × 1.2045] × 2 = $${formatCurrency(horaNocturna100)}`);
+        
+    } else { // LUNES A VIERNES
+        // 7 horas normales: (valorHora + antigüedad) × 7 × 1.2
+        const horasNormales = (valorHora + valorAntiguedad) * 7 * 1.2;
+        total += horasNormales;
+        desglose.push(`7h normales: (${valorHora} + ${valorAntiguedad}) × 7 × 1.2 = $${formatCurrency(horasNormales)}`);
+        
+        // 1 hora nocturna: [(valorHora + 30%) + antigüedad] × 1.2
+        const valorHoraNocturna = valorHora * 1.3;
+        const horaNocturna = (valorHoraNocturna + valorAntiguedad) * 1.2;
+        total += horaNocturna;
+        desglose.push(`1h nocturna: [(${valorHora} + 30%) + ${valorAntiguedad}] × 1.2 = $${formatCurrency(horaNocturna)}`);
+    }
+    
+    // Aplicar adicional sobre básico
+    if (adicionalBasicoPct > 0) {
+        const adicional = total * (adicionalBasicoPct / 100);
+        total += adicional;
+        desglose.push(`Adicional ${adicionalBasicoPct}%: $${formatCurrency(adicional)}`);
+    }
+    
+    return total;
+}
+
+/**
+ * TURNO NOCHE - Lunes a Viernes: 7hs nocturnas + 1h nocturna al 50% | Domingos: 6hs nocturnas + 2hs nocturnas al 100%
+ */
+function calcularTurnoNoche(valorHora, valorAntiguedad, adicionalBasicoPct, dayOfWeek, desglose) {
+    let total = 0;
+    
+    if (dayOfWeek === 0) { // DOMINGO
+        // 6 horas nocturnas: (valorHora × 1.3 + antigüedad) × 6 × 1.2
+        const horasNocturnas = (valorHora * 1.3 + valorAntiguedad) * 6 * 1.2;
+        total += horasNocturnas;
+        desglose.push(`6h nocturnas domingo: (${valorHora} × 1.3 + ${valorAntiguedad}) × 6 × 1.2 = $${formatCurrency(horasNocturnas)}`);
+        
+        // 2 horas nocturnas al 100%: [(valorHora + antigüedad + nocturnidad) × 1.2045] × 2 × 2
+        const nocturnidad = valorHora * 0.3;
+        const subtotal = valorHora + valorAntiguedad + nocturnidad;
+        const horasNocturnas100 = subtotal * 1.2045 * 2 * 2;
+        total += horasNocturnas100;
+        desglose.push(`2h nocturnas 100%: [(${valorHora} + ${valorAntiguedad} + ${nocturnidad.toFixed(2)}) × 1.2045] × 2 × 2 = $${formatCurrency(horasNocturnas100)}`);
+        
+    } else { // LUNES A VIERNES
+        // 7 horas nocturnas: (valorHora × 1.3 + antigüedad) × 7 × 1.2
+        const horasNocturnas = (valorHora * 1.3 + valorAntiguedad) * 7 * 1.2;
+        total += horasNocturnas;
+        desglose.push(`7h nocturnas: (${valorHora} × 1.3 + ${valorAntiguedad}) × 7 × 1.2 = $${formatCurrency(horasNocturnas)}`);
+        
+        // 1 hora nocturna al 50%: [(valorHora + antigüedad + nocturnidad) × 1.2045] × 1.5
+        const nocturnidad = valorHora * 0.3;
+        const subtotal = valorHora + valorAntiguedad + nocturnidad;
+        const horaNocturna50 = subtotal * 1.2045 * 1.5;
+        total += horaNocturna50;
+        desglose.push(`1h nocturna 50%: [(${valorHora} + ${valorAntiguedad} + ${nocturnidad.toFixed(2)}) × 1.2045] × 1.5 = $${formatCurrency(horaNocturna50)}`);
+    }
+    
+    // Aplicar adicional sobre básico
+    if (adicionalBasicoPct > 0) {
+        const adicional = total * (adicionalBasicoPct / 100);
+        total += adicional;
+        desglose.push(`Adicional ${adicionalBasicoPct}%: $${formatCurrency(adicional)}`);
+    }
+    
+    return total;
+}
+
+/**
+ * TURNO FERIADO - 8 horas normales con bonificación
+ */
+function calcularTurnoFeriado(valorHora, valorAntiguedad, adicionalBasicoPct, desglose) {
+    // Feriado: (valorHora + antigüedad) × 1.2 × 8
+    let total = (valorHora + valorAntiguedad) * 1.2 * 8;
+    desglose.push(`8h feriado: (${valorHora} + ${valorAntiguedad}) × 1.2 × 8 = $${formatCurrency(total)}`);
+    
+    // Aplicar adicional sobre básico
+    if (adicionalBasicoPct > 0) {
+        const adicional = total * (adicionalBasicoPct / 100);
+        total += adicional;
+        desglose.push(`Adicional ${adicionalBasicoPct}%: $${formatCurrency(adicional)}`);
+    }
+    
+    return total;
+}
+
+/**
+ * CÁLCULO DE HORAS EXTRAS - 50% adicional sobre valor base
+ */
+function calcularHorasExtras(turno, valorHora, valorAntiguedad, adicionalBasicoPct, extraHours) {
+    const valorHoraConAdicional = valorHora + (valorHora * adicionalBasicoPct / 100);
+    
+    if (turno === 'noche') {
+        // Horas extras nocturnas: (valorHora + adicional + antigüedad) × 1.3 × 1.5
+        return extraHours * (valorHoraConAdicional + valorAntiguedad) * 1.3 * 1.5;
+    } else {
+        // Horas extras normales: (valorHora + adicional + antigüedad) × 1.5
+        return extraHours * (valorHoraConAdicional + valorAntiguedad) * 1.5;
+    }
 }
 
 // =================================================================
@@ -569,9 +836,8 @@ function recordAttendance() {
         extraHoursMade
     );
     
-    // Presentismo calculation
-    let montoPresentismo = salarioBrutoSinPresentismo * 0.20;
-    let salarioDiarioBruto = salarioBrutoSinPresentismo + montoPresentismo;
+    // El cálculo ya incluye presentismo y retorna total a cobrar
+    let salarioDiarioBruto = salarioBrutoSinPresentismo / 0.8; // Convertir a total sin retenciones
     
     let extraHoursInfo = extraHoursMade > 0 ? ` (+${extraHoursMade}hs extras)` : "";
     
@@ -1092,6 +1358,8 @@ function calculateQuincenaTotal() {
                     <li><strong>Suma no remunerativa:</strong> ${formatCurrency(sumaNoRemunerativaSegunda)}</li>
                     <li><strong>Salario total con suma no remunerativa:</strong> ${formatCurrency(totalMes + sumaNoRemunerativaSegunda)}</li>
                 </ul>
+                <ul style="margin:0; padding-left:18px;">
+                </ul>
             </div>
         </div>
     `;
@@ -1225,6 +1493,20 @@ if (localStorage.getItem('FERIADOS')) {
     if (Array.isArray(guardados)) {
         FERIADOS.length = 0;
         FERIADOS.push(...guardados);
+    }
+}
+
+// Función para mostrar/ocultar detalles de cálculo
+function toggleCalculationDetails() {
+    const detailsContainer = document.getElementById('calculation-details');
+    const toggleBtn = document.getElementById('toggle-details-btn');
+    
+    if (detailsContainer.style.display === 'none' || detailsContainer.style.display === '') {
+        detailsContainer.style.display = 'block';
+        toggleBtn.textContent = 'Ocultar Detalles';
+    } else {
+        detailsContainer.style.display = 'none';
+        toggleBtn.textContent = 'Mostrar Detalles';
     }
 }
 

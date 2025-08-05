@@ -1288,3 +1288,49 @@ body::before {
     background: #ccc;
     cursor: not-allowed;
 }
+
+/* --- ESTILOS PARA DETALLE DE CÁLCULO --- */
+.calculo-detalle {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border: 2px solid #1976d2;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 4px 20px rgba(25, 118, 210, 0.15);
+    animation: calculoSlideIn 0.6s ease-out;
+}
+
+.calculo-detalle h3 {
+    color: #1976d2;
+    margin: 0 0 15px 0;
+    font-size: 1.3em;
+    text-align: center;
+    font-weight: 600;
+}
+
+#calculo-content {
+    font-family: 'Courier New', monospace;
+    font-size: 1em;
+    line-height: 1.6;
+    color: #333;
+    background: #ffffff;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+#calculo-content strong {
+    color: #1976d2;
+    font-weight: 700;
+}
+
+@keyframes calculoSlideIn {
+    0% { 
+        opacity: 0; 
+        transform: translateY(20px) scale(0.95);
+    }
+    100% { 
+        opacity: 1; 
+        transform: translateY(0) scale(1);
+    }
+}

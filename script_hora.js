@@ -390,6 +390,7 @@ function configurarEventListeners() {
                 actualizarValorHoraMostrar();
                 if (callback) callback();
                 calcularTotal();
+                saveConfiguration();
             });
         });
     };
@@ -442,7 +443,10 @@ function configurarEventListeners() {
     inputsNumericos.forEach(id => {
         const el = document.getElementById(id);
         if (el) {
-            el.addEventListener('input', calcularTotal);
+            el.addEventListener('input', () => {
+                calcularTotal();
+                saveConfiguration();
+            });
         }
     });
 }
@@ -487,12 +491,17 @@ function mostrarMontoAntiguedad() {
  * Inicializa la aplicación cuando se carga el DOM
  */
 function inicializar() {
+    // Cargar configuración guardada
+    loadSavedConfiguration();
+    
     // Configurar event listeners
     configurarEventListeners();
     
-    // Configurar estado inicial
-    document.getElementById('categoria').value = '';
-    document.getElementById('mes').value = '';
+    // Configurar estado inicial si no hay guardado
+    if (!localStorage.getItem('salaryCalcConfig')) {
+        document.getElementById('categoria').value = '';
+        document.getElementById('mes').value = '';
+    }
     
     // Activar primer botón de antigüedad por defecto
     const primerAntiguedadBtn = document.querySelector('.antiguedad-btn');
@@ -531,6 +540,67 @@ function inicializar() {
     });
     
     console.log('Script de cálculo por horas inicializado correctamente');
+}
+
+// Guardar configuración en localStorage
+function saveConfiguration() {
+    const config = {
+        categoria: document.getElementById('categoria').value,
+        mes: document.getElementById('mes').value,
+        antiguedad: document.getElementById('antiguedad').value,
+        adicionalBasico: document.getElementById('adicional-basico').value,
+        presentismo: document.getElementById('presentismo').value,
+        bono: document.getElementById('bono').value
+    };
+    localStorage.setItem('salaryCalcConfig', JSON.stringify(config));
+}
+
+// Cargar configuración guardada
+function loadSavedConfiguration() {
+    const saved = localStorage.getItem('salaryCalcConfig');
+    if (saved) {
+        const config = JSON.parse(saved);
+        
+        // Restaurar categoría
+        if (config.categoria) {
+            document.getElementById('categoria').value = config.categoria;
+            document.querySelector(`[data-value="${config.categoria}"]`)?.classList.add('active');
+        }
+        
+        // Restaurar mes
+        if (config.mes) {
+            document.getElementById('mes').value = config.mes;
+            document.querySelector(`[data-value="${config.mes}"]`)?.classList.add('active');
+        }
+        
+        // Restaurar antigüedad
+        if (config.antiguedad) {
+            document.getElementById('antiguedad').value = config.antiguedad;
+            document.querySelector(`[data-value="${config.antiguedad}"]`)?.classList.add('active');
+        }
+        
+        // Restaurar adicional básico
+        if (config.adicionalBasico) {
+            document.getElementById('adicional-basico').value = config.adicionalBasico;
+        }
+        
+        // Restaurar presentismo
+        if (config.presentismo) {
+            document.getElementById('presentismo').value = config.presentismo;
+            document.querySelector(`[data-value="${config.presentismo}"]`)?.classList.add('active');
+        }
+        
+        // Restaurar bono
+        if (config.bono) {
+            document.getElementById('bono').value = config.bono;
+            document.querySelector(`[data-value="${config.bono}"]`)?.classList.add('active');
+        }
+        
+        actualizarValorHoraMostrar();
+        mostrarTablaAntiguedad();
+        mostrarMontoAntiguedad();
+        calcularTotal();
+    }
 }
 
 // Inicializar cuando el DOM esté listo
