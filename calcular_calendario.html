@@ -52,6 +52,8 @@
             <a href="index.html" class="nav-link nav-logo">Inicio</a>
             <a href="calculo_hora.html" class="nav-link">Calcular por hora</a>
             <a href="calcular_calendario.html" class="nav-link active">Calcular calendario</a>
+            <a href="calculadora_adicional.html" class="nav-link">Adicional sobre básico</a>
+            <a href="analizar_recibo.html" class="nav-link">Analizador de recibos</a>
         </nav>
     </header>
 
@@ -103,6 +105,15 @@
             <div class="form-group">
                 <label>Horas extras por día:</label>
                 <input type="number" id="extras-input" min="0" max="16" value="0">
+            </div>
+            <div class="form-group">
+                <label>Presentismo (%):</label>
+                <select id="presentismo-select">
+                    <option value="0.20">20%</option>
+                    <option value="0.14">14%</option>
+                    <option value="0.07">7%</option>
+                    <option value="0">0%</option>
+                </select>
             </div>
         </div>
 

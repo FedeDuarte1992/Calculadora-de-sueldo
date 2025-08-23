@@ -50,22 +50,22 @@ const valoresHoraCat = {
 };
 
 /**
- * Tabla de valores de antigüedad por años (valores fijos)
+ * Tabla de valores de antigüedad por años y mes
  */
 const valoresAntiguedad = {
-    1: 25,
-    3: 37,
-    5: 50,
-    7: 68,
-    9: 81,
-    12: 108,
-    15: 130,
-    18: 152,
-    22: 175,
-    26: 198,
-    30: 217,
-    35: 238,
-    40: 261
+    1: {"junio": 25, "julio": 27, "agosto": 28, "septiembre": 28, "octubre": 28, "noviembre": 28},
+    3: {"junio": 37, "julio": 39, "agosto": 41, "septiembre": 41, "octubre": 41, "noviembre": 41},
+    5: {"junio": 50, "julio": 53, "agosto": 56, "septiembre": 56, "octubre": 56, "noviembre": 56},
+    7: {"junio": 68, "julio": 72, "agosto": 76, "septiembre": 76, "octubre": 76, "noviembre": 76},
+    9: {"junio": 81, "julio": 86, "agosto": 91, "septiembre": 91, "octubre": 91, "noviembre": 91},
+    12: {"junio": 108, "julio": 114, "agosto": 121, "septiembre": 121, "octubre": 121, "noviembre": 121},
+    15: {"junio": 130, "julio": 138, "agosto": 146, "septiembre": 146, "octubre": 146, "noviembre": 146},
+    18: {"junio": 152, "julio": 161, "agosto": 170, "septiembre": 170, "octubre": 170, "noviembre": 170},
+    22: {"junio": 175, "julio": 186, "agosto": 196, "septiembre": 196, "octubre": 196, "noviembre": 196},
+    26: {"junio": 198, "julio": 210, "agosto": 222, "septiembre": 222, "octubre": 222, "noviembre": 222},
+    30: {"junio": 217, "julio": 230, "agosto": 243, "septiembre": 243, "octubre": 243, "noviembre": 243},
+    35: {"junio": 238, "julio": 252, "agosto": 267, "septiembre": 267, "octubre": 267, "noviembre": 267},
+    40: {"junio": 261, "julio": 277, "agosto": 292, "septiembre": 292, "octubre": 292, "noviembre": 292}
 };
 
 // =================================================================
@@ -149,12 +149,17 @@ function mostrarMensajeValorManual() {
 // =================================================================
 
 /**
- * Obtiene el valor de antigüedad desde la tabla según años
+ * Obtiene el valor de antigüedad desde la tabla según años y mes
  * @param {number} anos - Años de antigüedad
- * @returns {number} Valor fijo de antigüedad
+ * @param {string} mes - Mes para obtener el valor correspondiente
+ * @returns {number} Valor de antigüedad según mes
  */
-function obtenerValorAntiguedad(anos) {
-    return valoresAntiguedad[anos] || 0;
+function obtenerValorAntiguedad(anos, mes = null) {
+    if (!mes) {
+        // Si no se proporciona mes, usar el mes seleccionado
+        mes = document.getElementById('mes').value;
+    }
+    return valoresAntiguedad[anos] ? (valoresAntiguedad[anos][mes] || 0) : 0;
 }
 
 /**
@@ -261,7 +266,8 @@ function calcularTotal() {
     // Variables para el cálculo
     let total = 0;
     let desglose = [];
-    const valorAntiguedad = obtenerValorAntiguedad(datos.antiguedadAnios);
+    const mesSeleccionado = document.getElementById('mes').value;
+    const valorAntiguedad = obtenerValorAntiguedad(datos.antiguedadAnios, mesSeleccionado);
 
     // Calcular horas normales
     let montoNormales = 0;
@@ -475,11 +481,12 @@ function mostrarTablaAntiguedad() {
  */
 function mostrarMontoAntiguedad() {
     const antig = parseFloat(document.getElementById('antiguedad').value) || 0;
-    const valorAntiguedad = obtenerValorAntiguedad(antig);
+    const mesSeleccionado = document.getElementById('mes').value;
+    const valorAntiguedad = obtenerValorAntiguedad(antig, mesSeleccionado);
     
     const container = document.getElementById('tabla-antiguedad');
-    if (container) {
-        container.innerHTML = `<div style='font-size:1.15em;color:#1976d2;font-weight:500;text-align:center;padding:8px;background:#f8f9fa;border-radius:8px;margin-top:8px;'>Valor Antigüedad por Hora: <span style='color:#1976d2;font-weight:bold;'>$${valorAntiguedad.toFixed(2)}</span><br><small style='color:#666;'>Se multiplica por total de horas normales + nocturnas</small></div>`;
+    if (container && mesSeleccionado) {
+        container.innerHTML = `<div style='font-size:1.15em;color:#1976d2;font-weight:500;text-align:center;padding:8px;background:#f8f9fa;border-radius:8px;margin-top:8px;'>Valor Antigüedad por Hora (${mesSeleccionado}): <span style='color:#1976d2;font-weight:bold;'>$${valorAntiguedad.toFixed(2)}</span><br><small style='color:#666;'>Se multiplica por total de horas normales + nocturnas</small></div>`;
     }
 }
 
@@ -604,7 +611,71 @@ function loadSavedConfiguration() {
 }
 
 // Inicializar cuando el DOM esté listo
-document.addEventListener('DOMContentLoaded', inicializar);
+document.addEventListener('DOMContentLoaded', () => {
+    inicializar();
+    loadFromURL();
+});
+
+// Cargar datos desde URL (para integración con analizador de recibos)
+function loadFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    if (urlParams.has('categoria')) {
+        const categoria = urlParams.get('categoria');
+        document.getElementById('categoria').value = categoria;
+        document.querySelector(`[data-value="${categoria}"]`)?.classList.add('active');
+    }
+    
+    if (urlParams.has('valorHora')) {
+        const valorHora = urlParams.get('valorHora');
+        valorHoraManualInput.value = valorHora;
+        setModoManual(true);
+    }
+    
+    if (urlParams.has('antiguedad')) {
+        const antiguedad = urlParams.get('antiguedad');
+        document.getElementById('antiguedad').value = antiguedad;
+        document.querySelector(`[data-value="${antiguedad}"]`)?.classList.add('active');
+    }
+    
+    if (urlParams.has('adicional')) {
+        const adicional = urlParams.get('adicional');
+        document.getElementById('adicional-basico').value = adicional;
+    }
+    
+    // Actualizar cálculos si se cargaron datos
+    if (urlParams.size > 0) {
+        actualizarValorHoraMostrar();
+        mostrarTablaAntiguedad();
+        mostrarMontoAntiguedad();
+        calcularTotal();
+        showNotification('Datos cargados desde el analizador de recibos', 'success');
+    }
+}
+
+// Función para mostrar notificaciones (si no existe)
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    const colors = {
+        success: '#4caf50',
+        error: '#f44336',
+        info: '#2196f3'
+    };
+    
+    notification.style.cssText = `
+        position: fixed; top: 20px; right: 20px; z-index: 10000;
+        background: ${colors[type]}; color: white; padding: 12px 20px;
+        border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        font-weight: 500; animation: slideIn 0.3s ease-out;
+    `;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease-in';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
 
 // =================================================================
 // FUNCIONES DE UTILIDAD

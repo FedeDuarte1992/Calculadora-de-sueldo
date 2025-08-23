@@ -16,7 +16,19 @@ const valoresHoraCat = {
 };
 
 const valoresAntiguedad = {
-    1: 25, 3: 37, 5: 50, 7: 68, 9: 81, 12: 108, 15: 130, 18: 152, 22: 175, 26: 198, 30: 217, 35: 238, 40: 261
+    1: {"junio": 25, "julio": 27, "agosto": 28, "septiembre": 28, "octubre": 28, "noviembre": 28},
+    3: {"junio": 37, "julio": 39, "agosto": 41, "septiembre": 41, "octubre": 41, "noviembre": 41},
+    5: {"junio": 50, "julio": 53, "agosto": 56, "septiembre": 56, "octubre": 56, "noviembre": 56},
+    7: {"junio": 68, "julio": 72, "agosto": 76, "septiembre": 76, "octubre": 76, "noviembre": 76},
+    9: {"junio": 81, "julio": 86, "agosto": 91, "septiembre": 91, "octubre": 91, "noviembre": 91},
+    12: {"junio": 108, "julio": 114, "agosto": 121, "septiembre": 121, "octubre": 121, "noviembre": 121},
+    15: {"junio": 130, "julio": 138, "agosto": 146, "septiembre": 146, "octubre": 146, "noviembre": 146},
+    18: {"junio": 152, "julio": 161, "agosto": 170, "septiembre": 170, "octubre": 170, "noviembre": 170},
+    22: {"junio": 175, "julio": 186, "agosto": 196, "septiembre": 196, "octubre": 196, "noviembre": 196},
+    26: {"junio": 198, "julio": 210, "agosto": 222, "septiembre": 222, "octubre": 222, "noviembre": 222},
+    30: {"junio": 217, "julio": 230, "agosto": 243, "septiembre": 243, "octubre": 243, "noviembre": 243},
+    35: {"junio": 238, "julio": 252, "agosto": 267, "septiembre": 267, "octubre": 267, "noviembre": 267},
+    40: {"junio": 261, "julio": 277, "agosto": 292, "septiembre": 292, "octubre": 292, "noviembre": 292}
 };
 
 // Suma no remunerativa por mes
@@ -62,7 +74,8 @@ function saveConfiguration() {
         antiguedad: document.getElementById('antiguedad-select').value,
         adicional: document.getElementById('adicional-input').value,
         turno: document.getElementById('turno-select').value,
-        extras: document.getElementById('extras-input').value
+        extras: document.getElementById('extras-input').value,
+        presentismo: document.getElementById('presentismo-select').value
     };
     localStorage.setItem('salaryCalcConfig', JSON.stringify(config));
 }
@@ -77,13 +90,14 @@ function loadSavedConfiguration() {
         if (config.adicional) document.getElementById('adicional-input').value = config.adicional;
         if (config.turno) document.getElementById('turno-select').value = config.turno;
         if (config.extras) document.getElementById('extras-input').value = config.extras;
+        if (config.presentismo) document.getElementById('presentismo-select').value = config.presentismo;
         updateSelectedValues();
     }
 }
 
 // Configurar event listeners
 function setupEventListeners() {
-    const fields = ['categoria-select', 'antiguedad-select', 'adicional-input', 'turno-select', 'extras-input'];
+    const fields = ['categoria-select', 'antiguedad-select', 'adicional-input', 'turno-select', 'extras-input', 'presentismo-select'];
     fields.forEach(fieldId => {
         const field = document.getElementById(fieldId);
         if (field) {
@@ -242,23 +256,25 @@ function updateSelectedValues() {
     const adicional = document.getElementById('adicional-input').value;
     const turno = document.getElementById('turno-select').value;
     const extras = document.getElementById('extras-input').value;
+    const presentismo = document.getElementById('presentismo-select').value;
     
     const valuesDiv = document.getElementById('selected-values');
     const displayDiv = document.getElementById('values-display');
     
-    if (categoria || antiguedad || turno || adicional > 0 || extras > 0) {
+    if (categoria || antiguedad || turno || adicional > 0 || extras > 0 || presentismo) {
         let html = '';
         if (categoria) html += `<span style="color:#666;">👤</span> <strong>Categoría:</strong> ${categoria} | `;
         if (antiguedad) html += `<span style="color:#666;">📈</span> <strong>Antigüedad:</strong> ${antiguedad} años | `;
         if (turno) html += `<span style="color:#666;">🕐</span> <strong>Turno:</strong> ${turno.charAt(0).toUpperCase() + turno.slice(1)} | `;
         if (adicional > 0) html += `<span style="color:#666;">➕</span> <strong>Adicional:</strong> ${adicional}% | `;
         if (extras > 0) html += `<span style="color:#666;">⏱️</span> <strong>Horas extras:</strong> ${extras}h | `;
+        if (presentismo) html += `<span style="color:#666;">🎁</span> <strong>Presentismo:</strong> ${(parseFloat(presentismo) * 100).toFixed(0)}% | `;
         
         // Mostrar valor hora si está disponible (basado en mes del calendario)
         if (categoria && antiguedad) {
             const calendarMonth = currentDate.getMonth() + 1;
             const valorHora = valoresHoraCat[categoria] ? valoresHoraCat[categoria][getMonthName(calendarMonth)] : 0;
-            const valorAntiguedad = valoresAntiguedad[parseInt(antiguedad)] || 0;
+            const valorAntiguedad = valoresAntiguedad[parseInt(antiguedad)] ? (valoresAntiguedad[parseInt(antiguedad)][getMonthName(calendarMonth)] || 0) : 0;
             if (valorHora > 0) {
                 html += `<br><span style="color:#666;">📅</span> <strong>Mes:</strong> ${getMonthName(calendarMonth).charAt(0).toUpperCase() + getMonthName(calendarMonth).slice(1)} | <span style="color:#666;">💰</span> <strong>Valor hora:</strong> $${valorHora.toLocaleString('es-AR')} | <span style="color:#666;">⏰</span> <strong>Antigüedad/hora:</strong> $${valorAntiguedad.toLocaleString('es-AR')}`;
             }
@@ -328,7 +344,8 @@ function getMonthName(monthNumber) {
 // Función de cálculo específica para calendario
 function calcularSalarioCalendario(datos) {
     let total = 0;
-    const valorAntiguedad = datos.antiguedadAnios ? (valoresAntiguedad[datos.antiguedadAnios] || 0) : 0;
+    const mesActual = getMonthName(new Date().getMonth() + 1);
+    const valorAntiguedad = datos.antiguedadAnios ? (valoresAntiguedad[datos.antiguedadAnios] ? (valoresAntiguedad[datos.antiguedadAnios][mesActual] || 0) : 0) : 0;
     
     // Calcular horas normales
     let montoNormales = 0;
@@ -471,6 +488,7 @@ function calculateSelected() {
     const antiguedad = parseInt(document.getElementById('antiguedad-select').value);
     const adicional = parseFloat(document.getElementById('adicional-input').value) || 0;
     const horasExtras = parseInt(document.getElementById('extras-input').value) || 0;
+    const presentismo = parseFloat(document.getElementById('presentismo-select').value) || 0.20;
     
     if (!categoria || !antiguedad) {
         showNotification('Por favor completa categoría y antigüedad', 'warning');
@@ -499,7 +517,7 @@ function calculateSelected() {
         if (!hours) return;
         
         const valorHora = valoresHoraCat[categoria] ? valoresHoraCat[categoria][getMonthName(month)] : 0;
-        const valorAntiguedad = valoresAntiguedad[antiguedad] || 0;
+        const valorAntiguedad = valoresAntiguedad[antiguedad] ? (valoresAntiguedad[antiguedad][getMonthName(month)] || 0) : 0;
         
         if (valorHora === 0) return;
         
@@ -512,7 +530,7 @@ function calculateSelected() {
             horasNocturnas100: hours.nocturnas100,
             horasFeriado: hours.feriado,
             horas50: horasExtras,
-            presentismo: 0.20,
+            presentismo: presentismo,
             adicionalPorcentaje: adicional,
             antiguedadAnios: antiguedad
         });
