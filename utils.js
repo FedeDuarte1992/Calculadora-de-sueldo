@@ -311,6 +311,15 @@ function showInfo(message, duration = 3000) {
     showNotification(message, 'info', duration);
 }
 
+// Variable global para rastrear la posición del cursor
+let lastCursorPosition = { x: 0, y: 0 };
+
+// Rastrear posición del cursor
+document.addEventListener('mousemove', (e) => {
+    lastCursorPosition.x = e.clientX;
+    lastCursorPosition.y = e.clientY;
+});
+
 /**
  * Función base para mostrar notificaciones
  * @param {string} message - Mensaje a mostrar
@@ -323,21 +332,39 @@ function showNotification(message, type = 'info', duration = 3000) {
     notification.className = `notification notification-${type}`;
     notification.textContent = message;
     
+    // Calcular posición cerca del cursor
+    const offsetX = 15; // Desplazamiento horizontal desde el cursor
+    const offsetY = -10; // Desplazamiento vertical desde el cursor
+    
+    let left = lastCursorPosition.x + offsetX;
+    let top = lastCursorPosition.y + offsetY;
+    
+    // Ajustar si se sale de la pantalla
+    const maxWidth = 300;
+    if (left + maxWidth > window.innerWidth) {
+        left = lastCursorPosition.x - maxWidth - offsetX;
+    }
+    if (top < 0) {
+        top = lastCursorPosition.y + 20;
+    }
+    
     // Estilos inline para la notificación
     Object.assign(notification.style, {
         position: 'fixed',
-        top: '20px',
-        right: '20px',
+        left: left + 'px',
+        top: top + 'px',
         padding: '12px 20px',
         borderRadius: '8px',
         color: '#fff',
         fontWeight: '500',
         zIndex: '10000',
         opacity: '0',
-        transform: 'translateX(100%)',
+        transform: 'scale(0.8)',
         transition: 'all 0.3s ease',
-        maxWidth: '300px',
-        wordWrap: 'break-word'
+        maxWidth: maxWidth + 'px',
+        wordWrap: 'break-word',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+        pointerEvents: 'none'
     });
     
     // Colores según el tipo
@@ -355,13 +382,13 @@ function showNotification(message, type = 'info', duration = 3000) {
     // Mostrar con animación
     setTimeout(() => {
         notification.style.opacity = '1';
-        notification.style.transform = 'translateX(0)';
+        notification.style.transform = 'scale(1)';
     }, 10);
     
     // Ocultar después del tiempo especificado
     setTimeout(() => {
         notification.style.opacity = '0';
-        notification.style.transform = 'translateX(100%)';
+        notification.style.transform = 'scale(0.8)';
         
         setTimeout(() => {
             if (notification.parentNode) {

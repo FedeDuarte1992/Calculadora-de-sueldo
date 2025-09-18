@@ -457,6 +457,13 @@ function assignTurnToSelectedDays() {
     showNotification(`✓ Turno "${turnoNombre}" asignado a ${cantidadDias} día${cantidadDias > 1 ? 's' : ''}`, 'success');
 }
 
+// Variable para rastrear posición del cursor
+let cursorPosition = { x: 0, y: 0 };
+document.addEventListener('mousemove', (e) => {
+    cursorPosition.x = e.clientX;
+    cursorPosition.y = e.clientY;
+});
+
 // Mostrar notificación elegante
 function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
@@ -467,17 +474,32 @@ function showNotification(message, type = 'info') {
     };
     
     const color = colors[type] || colors.info;
+    
+    // Posicionar cerca del cursor
+    let left = cursorPosition.x + 15;
+    let top = cursorPosition.y - 10;
+    
+    if (left + 300 > window.innerWidth) left = cursorPosition.x - 315;
+    if (top < 0) top = cursorPosition.y + 20;
+    
     notification.style.cssText = `
-        position: fixed; top: 20px; right: 20px; z-index: 10000;
+        position: fixed; left: ${left}px; top: ${top}px; z-index: 10000;
         background: ${color.bg}; color: white; padding: 12px 20px;
         border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        font-weight: 500; animation: slideIn 0.3s ease-out;
+        font-weight: 500; max-width: 300px; pointer-events: none;
+        opacity: 0; transform: scale(0.8); transition: all 0.3s ease;
     `;
     notification.innerHTML = `${color.icon} ${message}`;
     
     document.body.appendChild(notification);
     setTimeout(() => {
-        notification.style.animation = 'slideOut 0.3s ease-in';
+        notification.style.opacity = '1';
+        notification.style.transform = 'scale(1)';
+    }, 10);
+    
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'scale(0.8)';
         setTimeout(() => notification.remove(), 300);
     }, 3000);
 }
