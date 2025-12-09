@@ -12,7 +12,7 @@ const valoresHoraCat = {
     "E": {"junio":2964, "julio":3022, "agosto":3080, "septiembre":3138, "octubre":3197, "noviembre":3255},
     "F": {"junio":3021, "julio":3080, "agosto":3140, "septiembre":3199, "octubre":3258, "noviembre":3317},
     "G": {"junio":3115, "julio":3176, "agosto":3237, "septiembre":3298, "octubre":3359, "noviembre":3420},
-    "H": {"junio":3182, "julio":3245, "agosto":3307, "septiembre":3370, "octubre":3432, "noviembre":3494}
+    "H": {"junio":3182, "julio":3245, "agosto":3307, "septiembre":3370, "octubre":3432, "noviembre":3494, "diciembre" :3494}
 };
 
 const valoresAntiguedad = {
