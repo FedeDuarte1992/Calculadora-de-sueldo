@@ -28,7 +28,7 @@ const valoresAntiguedad = {
     26: {"junio": 198, "julio": 210, "agosto": 222, "septiembre": 222, "octubre": 222, "noviembre": 222},
     30: {"junio": 217, "julio": 230, "agosto": 243, "septiembre": 243, "octubre": 243, "noviembre": 243},
     35: {"junio": 238, "julio": 252, "agosto": 267, "septiembre": 267, "octubre": 267, "noviembre": 267},
-    40: {"junio": 261, "julio": 277, "agosto": 292, "septiembre": 292, "octubre": 292, "noviembre": 292}
+    40: {"junio": 261, "julio": 277, "agosto": 292, "septiembre": 292, "octubre": 292, "noviembre": 292, "diciembre" :292}
 };
 
 // Suma no remunerativa por mes
