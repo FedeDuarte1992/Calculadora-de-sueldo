@@ -273,13 +273,16 @@ function updateSelectedValues() {
         if (extras > 0) html += `<span style="color:#666;">⏱️</span> <strong>Horas extras:</strong> ${extras}h | `;
         if (presentismo) html += `<span style="color:#666;">🎁</span> <strong>Presentismo:</strong> ${(parseFloat(presentismo) * 100).toFixed(0)}% | `;
         
-        // Mostrar valor hora si está disponible (basado en mes del calendario)
+        // Mostrar valor hora si está disponible (basado en mes y año del calendario)
         if (categoria && antiguedad) {
             const calendarMonth = currentDate.getMonth() + 1;
-            const valorHora = valoresHoraCat[categoria] ? valoresHoraCat[categoria][getMonthName(calendarMonth)] : 0;
-            const valorAntiguedad = valoresAntiguedad[parseInt(antiguedad)] ? (valoresAntiguedad[parseInt(antiguedad)][getMonthName(calendarMonth)] || 0) : 0;
+            const calendarYear = currentDate.getFullYear();
+            const monthKey = getMonthKey(calendarMonth, calendarYear);
+            const valorHora = valoresHoraCat[categoria] ? (valoresHoraCat[categoria][monthKey] || 0) : 0;
+            const valorAntiguedad = valoresAntiguedad[parseInt(antiguedad)] ? (valoresAntiguedad[parseInt(antiguedad)][monthKey] || 0) : 0;
             if (valorHora > 0) {
-                html += `<br><span style="color:#666;">📅</span> <strong>Mes:</strong> ${getMonthName(calendarMonth).charAt(0).toUpperCase() + getMonthName(calendarMonth).slice(1)} | <span style="color:#666;">💰</span> <strong>Valor hora:</strong> $${valorHora.toLocaleString('es-AR')} | <span style="color:#666;">⏰</span> <strong>Antigüedad/hora:</strong> $${valorAntiguedad.toLocaleString('es-AR')}`;
+                const prettyMonth = getMonthPrettyName(calendarMonth).charAt(0).toUpperCase() + getMonthPrettyName(calendarMonth).slice(1);
+                html += `<br><span style="color:#666;">📅</span> <strong>Mes:</strong> ${prettyMonth} | <span style="color:#666;">💰</span> <strong>Valor hora:</strong> $${valorHora.toLocaleString('es-AR')} | <span style="color:#666;">⏰</span> <strong>Antigüedad/hora:</strong> $${valorAntiguedad.toLocaleString('es-AR')}`;
             }
         }
         
@@ -337,18 +340,26 @@ function getHoursForShiftAndDay(turno, dayOfWeek) {
     return shiftConfig.weekday;
 }
 
-// Obtener nombre del mes
-function getMonthName(monthNumber) {
+// Obtener nombre del mes para mostrar (Ej: 'Enero')
+function getMonthPrettyName(monthNumber) {
     const months = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
                    'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
     return months[monthNumber - 1];
 }
 
+// Obtener clave de mes con año corto para lookup en tablas (Ej: 'enero25' o 'enero26')
+function getMonthKey(monthNumber, year) {
+    const shortMonth = getMonthPrettyName(monthNumber);
+    const yy = String(year).slice(-2);
+    return `${shortMonth}${yy}`;
+} 
+
 // Función de cálculo específica para calendario
 function calcularSalarioCalendario(datos) {
     let total = 0;
-    const mesActual = getMonthName(new Date().getMonth() + 1);
-    const valorAntiguedad = datos.antiguedadAnios ? (valoresAntiguedad[datos.antiguedadAnios] ? (valoresAntiguedad[datos.antiguedadAnios][mesActual] || 0) : 0) : 0;
+    // Permitir pasar monthKey desde el llamador; si no se pasa, usar el mes actual
+    const monthKey = datos.monthKey || getMonthKey(new Date().getMonth() + 1, new Date().getFullYear());
+    const valorAntiguedad = datos.antiguedadAnios ? (valoresAntiguedad[datos.antiguedadAnios] ? (valoresAntiguedad[datos.antiguedadAnios][monthKey] || 0) : 0) : 0;
     
     // Calcular horas normales
     let montoNormales = 0;
@@ -366,16 +377,18 @@ function calcularSalarioCalendario(datos) {
     
     // Calcular antigüedad sobre horas normales y nocturnas
     const totalHorasBasicas = datos.horasNormales + datos.horasNocturnas;
+    let montoAntiguedad = 0;
     if (totalHorasBasicas > 0 && valorAntiguedad > 0) {
-        const montoAntiguedad = totalHorasBasicas * valorAntiguedad;
+        montoAntiguedad = totalHorasBasicas * valorAntiguedad;
         total += montoAntiguedad;
     }
     
     // Calcular adicional sobre básico
     const sumaBase = montoNormales + montoNocturnas;
+    let montoAdicional = 0;
     if (datos.adicionalPorcentaje > 0 && sumaBase > 0) {
-        const adicionalBasico = sumaBase * (datos.adicionalPorcentaje / 100);
-        total += adicionalBasico;
+        montoAdicional = sumaBase * (datos.adicionalPorcentaje / 100);
+        total += montoAdicional;
     }
     
     // Calcular horas 100% (sábado)
@@ -416,9 +429,10 @@ function calcularSalarioCalendario(datos) {
         total += monto;
     }
     
-    // Calcular presentismo
+    // Calcular presentismo (monto separado para desglose)
+    let montoPresentismo = 0;
     if (datos.presentismo > 0) {
-        const montoPresentismo = total * datos.presentismo;
+        montoPresentismo = total * datos.presentismo;
         total += montoPresentismo;
     }
     
@@ -431,12 +445,12 @@ function calcularSalarioCalendario(datos) {
         desglose: {
             normales: montoNormales,
             nocturnas: montoNocturnas,
-            antiguedad: totalHorasBasicas * valorAntiguedad,
-            adicional: sumaBase * (datos.adicionalPorcentaje / 100),
-            presentismo: total * datos.presentismo / (1 + datos.presentismo)
+            antiguedad: montoAntiguedad,
+            adicional: montoAdicional,
+            presentismo: montoPresentismo
         }
     };
-}
+} 
 
 // Asignar turno actual a días seleccionados
 function assignTurnToSelectedDays() {
@@ -541,8 +555,9 @@ function calculateSelected() {
         const hours = getHoursForShiftAndDay(turno, dayOfWeek);
         if (!hours) return;
         
-        const valorHora = valoresHoraCat[categoria] ? valoresHoraCat[categoria][getMonthName(month)] : 0;
-        const valorAntiguedad = valoresAntiguedad[antiguedad] ? (valoresAntiguedad[antiguedad][getMonthName(month)] || 0) : 0;
+        const monthKey = getMonthKey(month, year);
+        const valorHora = valoresHoraCat[categoria] ? (valoresHoraCat[categoria][monthKey] || 0) : 0;
+        const valorAntiguedad = valoresAntiguedad[antiguedad] ? (valoresAntiguedad[antiguedad][monthKey] || 0) : 0;
         
         if (valorHora === 0) return;
         
@@ -557,7 +572,8 @@ function calculateSelected() {
             horas50: horasExtras,
             presentismo: presentismo,
             adicionalPorcentaje: adicional,
-            antiguedadAnios: antiguedad
+            antiguedadAnios: antiguedad,
+            monthKey: monthKey
         });
         
         const dayNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
@@ -642,7 +658,11 @@ function mostrarResultados(detallesPorDia) {
     
     // Obtener mes para suma no remunerativa
     const primerDia = detallesPorDia[0];
-    const sumaNoRemun = segundaQuincena.dias > 0 ? (SUMA_NO_REMUN[getMonthName(primerDia.mes)] || 0) : 0;
+    let sumaNoRemun = 0;
+    if (segundaQuincena.dias > 0 && primerDia) {
+        const monthKey = getMonthKey(primerDia.mes, primerDia.año);
+        sumaNoRemun = SUMA_NO_REMUN[monthKey] || 0;
+    }
     
     // Función para generar desglose HTML
     function generarDesgloseHTML(desglose) {
