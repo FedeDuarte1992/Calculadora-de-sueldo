@@ -266,12 +266,12 @@ function updateSelectedValues() {
     
     if (categoria || antiguedad || turno || adicional > 0 || extras > 0 || presentismo) {
         let html = '';
-        if (categoria) html += `<span style="color:#666;">👤</span> <strong>Categoría:</strong> ${categoria} | `;
-        if (antiguedad) html += `<span style="color:#666;">📈</span> <strong>Antigüedad:</strong> ${antiguedad} años | `;
-        if (turno) html += `<span style="color:#666;">🕐</span> <strong>Turno:</strong> ${turno.charAt(0).toUpperCase() + turno.slice(1)} | `;
-        if (adicional > 0) html += `<span style="color:#666;">➕</span> <strong>Adicional:</strong> ${adicional}% | `;
-        if (extras > 0) html += `<span style="color:#666;">⏱️</span> <strong>Horas extras:</strong> ${extras}h | `;
-        if (presentismo) html += `<span style="color:#666;">🎁</span> <strong>Presentismo:</strong> ${(parseFloat(presentismo) * 100).toFixed(0)}% | `;
+        if (categoria) html += `<strong>Categoría:</strong> ${categoria} | `;
+        if (antiguedad) html += `<strong>Antigüedad:</strong> ${antiguedad} años | `;
+        if (turno) html += `<strong>Turno:</strong> ${turno.charAt(0).toUpperCase() + turno.slice(1)} | `;
+        if (adicional > 0) html += `<strong>Adicional:</strong> ${adicional}% | `;
+        if (extras > 0) html += `<strong>Horas extras:</strong> ${extras}h | `;
+        if (presentismo) html += `<strong>Presentismo:</strong> ${(parseFloat(presentismo) * 100).toFixed(0)}% | `;
         
         // Mostrar valor hora si está disponible (basado en mes y año del calendario)
         if (categoria && antiguedad) {
@@ -282,7 +282,7 @@ function updateSelectedValues() {
             const valorAntiguedad = valoresAntiguedad[parseInt(antiguedad)] ? (valoresAntiguedad[parseInt(antiguedad)][monthKey] || 0) : 0;
             if (valorHora > 0) {
                 const prettyMonth = getMonthPrettyName(calendarMonth).charAt(0).toUpperCase() + getMonthPrettyName(calendarMonth).slice(1);
-                html += `<br><span style="color:#666;">📅</span> <strong>Mes:</strong> ${prettyMonth} | <span style="color:#666;">💰</span> <strong>Valor hora:</strong> $${valorHora.toLocaleString('es-AR')} | <span style="color:#666;">⏰</span> <strong>Antigüedad/hora:</strong> $${valorAntiguedad.toLocaleString('es-AR')}`;
+                html += `<br><strong>Mes:</strong> ${prettyMonth} | <strong>Valor hora:</strong> $${valorHora.toLocaleString('es-AR')} | <strong>Antigüedad/hora:</strong> $${valorAntiguedad.toLocaleString('es-AR')}`;
             }
         }
         
@@ -312,7 +312,7 @@ function clearSelection() {
             generateCalendar();
             updateCalculateButton();
             document.getElementById('results-section').style.display = 'none';
-            showNotification('🧹 Todo limpiado correctamente', 'success');
+            showNotification('Todo limpiado correctamente', 'success');
         }
     } else {
         showNotification('No hay nada que limpiar', 'info');
@@ -471,7 +471,7 @@ function assignTurnToSelectedDays() {
     updateCalculateButton();
     
     const turnoNombre = turno.charAt(0).toUpperCase() + turno.slice(1);
-    showNotification(`✓ Turno "${turnoNombre}" asignado a ${cantidadDias} día${cantidadDias > 1 ? 's' : ''}`, 'success');
+    showNotification(`Turno "${turnoNombre}" asignado a ${cantidadDias} día${cantidadDias > 1 ? 's' : ''}`, 'success');
 }
 
 // Variable para rastrear posición del cursor
@@ -483,42 +483,18 @@ document.addEventListener('mousemove', (e) => {
 
 // Mostrar notificación elegante
 function showNotification(message, type = 'info') {
+    // Reuse the global util if available
+    if (typeof window.showNotification === 'function' && window.showNotification !== showNotification) {
+        window.showNotification(message, type);
+        return;
+    }
+    // Fallback: simple notification
     const notification = document.createElement('div');
-    const colors = {
-        success: { bg: '#4caf50', icon: '✓' },
-        warning: { bg: '#ff9800', icon: '⚠' },
-        info: { bg: '#2196f3', icon: 'i' }
-    };
-    
-    const color = colors[type] || colors.info;
-    
-    // Posicionar cerca del cursor
-    let left = cursorPosition.x + 15;
-    let top = cursorPosition.y - 10;
-    
-    if (left + 300 > window.innerWidth) left = cursorPosition.x - 315;
-    if (top < 0) top = cursorPosition.y + 20;
-    
-    notification.style.cssText = `
-        position: fixed; left: ${left}px; top: ${top}px; z-index: 10000;
-        background: ${color.bg}; color: white; padding: 12px 20px;
-        border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        font-weight: 500; max-width: 300px; pointer-events: none;
-        opacity: 0; transform: scale(0.8); transition: all 0.3s ease;
-    `;
-    notification.innerHTML = `${color.icon} ${message}`;
-    
+    notification.style.cssText = `position: fixed; left: 20px; bottom: 20px; z-index: 10000; background: #333; color: white; padding: 12px 20px; border-radius: 8px; font-weight: 500; opacity: 0; transform: scale(0.95); transition: all 0.2s ease;`;
+    notification.textContent = message;
     document.body.appendChild(notification);
-    setTimeout(() => {
-        notification.style.opacity = '1';
-        notification.style.transform = 'scale(1)';
-    }, 10);
-    
-    setTimeout(() => {
-        notification.style.opacity = '0';
-        notification.style.transform = 'scale(0.8)';
-        setTimeout(() => notification.remove(), 300);
-    }, 3000);
+    setTimeout(() => { notification.style.opacity = '1'; notification.style.transform = 'scale(1)'; }, 10);
+    setTimeout(() => { notification.style.opacity = '0'; notification.style.transform = 'scale(0.95)'; setTimeout(() => notification.remove(), 300); }, 3000);
 }
 
 // Calcular todos los días con turnos asignados
@@ -541,7 +517,7 @@ function calculateSelected() {
     }
     
     // Mostrar indicador de cálculo
-    showNotification(`📊 Calculando ${diasConTurno.length} días...`, 'info');
+    showNotification(`Calculando ${diasConTurno.length} días...`, 'info');
     
     let detallesPorDia = [];
     
@@ -598,7 +574,7 @@ function calculateSelected() {
     
     // Notificación de éxito
     setTimeout(() => {
-        showNotification(`✓ Cálculo completado: ${detallesPorDia.length} días procesados`, 'success');
+        showNotification(`Cálculo completado: ${detallesPorDia.length} días procesados`, 'success');
     }, 500);
 }
 

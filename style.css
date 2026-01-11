@@ -2,6 +2,18 @@
    ESTILOS ORIGINALES PARA HEADER Y NAVEGACIÓN
    ================================================================= */
 
+/* Tipografía y paleta general */
+body {
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #222;
+    background-color: #fafafa;
+    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    margin: 0; padding: 0; line-height: 1.45;
+}
+
+a { color: inherit; }
+
+
 /* --- HEADER Y NAVEGACIÓN --- */
 .main-header {
     background: linear-gradient(135deg, #1976d2 0%, #42a5f5 100%);
@@ -100,35 +112,53 @@
 }
 
 .feature-icon {
-    margin-bottom: 20px;
+    display: none; /* ocultamos iconos decorativos para una interfaz más limpia */
 }
 
 .feature-card h3 {
-    color: #1976d2;
-    margin-bottom: 15px;
-    font-size: 1.3em;
+    color: #1f6fb2;
+    margin-bottom: 10px;
+    font-size: 1.25em;
 }
 
 .feature-card p {
-    color: #666;
-    margin-bottom: 20px;
-    line-height: 1.6;
+    color: #555;
+    margin-bottom: 16px;
+    line-height: 1.5;
 }
 
 .feature-link {
     display: inline-block;
-    background: linear-gradient(135deg, #1976d2, #42a5f5);
+    background: #1f6fb2;
     color: white;
     text-decoration: none;
-    padding: 12px 25px;
-    border-radius: 25px;
-    font-weight: 500;
-    transition: all 0.3s ease;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .feature-link:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(25, 118, 210, 0.4);
+    box-shadow: 0 6px 18px rgba(31, 111, 178, 0.14);
+}
+
+/* Pequeño círculo de ayuda para tooltips (sustituye SVGs) */
+.help-dot {
+    display:inline-flex; align-items:center; justify-content:center;
+    width:20px; height:20px; border-radius:50%; background:#f0f0f0; color:#666;
+    font-size:12px; font-weight:700; margin-left:8px; cursor:default;
+}
+
+/* Mejoras móviles: botones y centrado */
+@media (max-width: 600px) {
+    .main-header .main-nav { justify-content: center; }
+    .feature-link { display:block; width:100%; text-align:center; padding:12px 16px; }
+    .calc-hora-container, .calc-container, .calendar-container { margin: 20px auto; padding: 20px; width: 95%; }
+    .form-row { display:flex; flex-direction:column; gap:8px; }
+    .hora-input, .adicional-input, .calc-input { width: 100%; }
+    .main-title { text-align:center; }
+    .subtitle, .description { text-align:center; }
 }
 
 .footer-info {
