@@ -27,8 +27,8 @@ Un sistema web completo para calcular salarios basado en diferentes modalidades 
 - Manejo de feriados
 
 ### Calculadora de Adicional sobre Básico
-- Cálculo de porcentajes de adicional
-- Comparación entre múltiples recibos
+- Cálculo de porcentajes de adicional sobre el sueldo básico
+- Comparación entre dos valores básicos (opcional)
 - Fórmula transparente de cálculo
 
 ## 📁 Estructura del Proyecto
@@ -89,9 +89,9 @@ Calcular sueldo/
 5. El sistema registrará tu día y calculará quincenas
 
 ### Calculadora de Adicional
-1. Ingresa los valores de tu recibo
-2. (Opcional) Agrega un segundo recibo para comparar
-3. El sistema calculará el porcentaje automáticamente
+1. Ingresa el sueldo básico y el porcentaje adicional
+2. (Opcional) Agrega otro valor básico para comparar
+3. El sistema calculará el monto del adicional automáticamente
 
 ## 🔧 Configuración
 

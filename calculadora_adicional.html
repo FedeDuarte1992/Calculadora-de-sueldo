@@ -90,7 +90,6 @@
             <a href="calculo_hora.html" class="nav-link">Calcular por hora</a>
             <a href="calcular_calendario.html" class="nav-link">Calcular calendario</a>
             <a href="calculadora_adicional.html" class="nav-link active">Adicional sobre básico</a>
-            <a href="analizar_recibo.html" class="nav-link">Analizador de recibos</a>
         </nav>
     </header>
     <div class="calc-container animated-fadein">
@@ -104,8 +103,8 @@
             <b>C</b>: nocturno<br>
             <b>D</b>: antigüedad<br>
         </div>
-        <div class="calc-block" id="recibo1-block">
-            <div style="font-weight:600;color:#f9a825;margin-bottom:4px;">Recibo 1</div>
+        <div class="calc-block" id="valor1-block">
+            <div style="font-weight:600;color:#f9a825;margin-bottom:4px;">Valor base 1</div>
             <label class="calc-label">Adicional pagado (A):</label>
             <input type="number" id="input-a1" class="calc-input" min="0" step="0.01" placeholder="Ej: 500">
             <label class="calc-label">Sueldo básico (B):</label>
@@ -115,8 +114,8 @@
             <label class="calc-label">Antigüedad (D):</label>
             <input type="number" id="input-d1" class="calc-input" min="0" step="0.01" placeholder="Ej: 300">
         </div>
-        <div class="calc-block" id="recibo2-block" style="display:none;">
-            <div style="font-weight:600;color:#f9a825;margin-bottom:4px;">Recibo 2</div>
+        <div class="calc-block" id="valor2-block" style="display:none;">
+            <div style="font-weight:600;color:#f9a825;margin-bottom:4px;">Valor base 2</div>
             <label class="calc-label">Adicional pagado (A):</label>
             <input type="number" id="input-a2" class="calc-input" min="0" step="0.01" placeholder="Ej: 500">
             <label class="calc-label">Sueldo básico (B):</label>
@@ -126,12 +125,12 @@
             <label class="calc-label">Antigüedad (D):</label>
             <input type="number" id="input-d2" class="calc-input" min="0" step="0.01" placeholder="Ej: 300">
         </div>
-        <button class="calc-btn" id="btn-agregar" onclick="mostrarRecibo2()">Agregar otro recibo</button>
+        <button class="calc-btn" id="btn-agregar" onclick="mostrarValor2()">Agregar otro valor base</button>
         <div id="calc-resultado" class="calc-result" style="display:none;"></div>
         <div id="calc-comparacion" class="calc-compare" style="display:none;"></div>
         <script>
-        function mostrarRecibo2() {
-            document.getElementById('recibo2-block').style.display = 'block';
+        function mostrarValor2() {
+            document.getElementById('valor2-block').style.display = 'block';
             document.getElementById('btn-agregar').style.display = 'none';
             calcularAdicionalAuto();
         }
@@ -144,17 +143,17 @@
             var resultado = document.getElementById('calc-resultado');
             var comparacion = document.getElementById('calc-comparacion');
             var porcentaje1 = 0, porcentaje2 = null;
-            var recibo2Visible = document.getElementById('recibo2-block').style.display !== 'none';
+            var valor2Visible = document.getElementById('valor2-block').style.display !== 'none';
             var denom1 = b1 + c1 + d1;
             if (denom1 === 0) {
                 resultado.style.display = 'block';
-                resultado.innerHTML = 'En Recibo 1, el denominador (B + C + D) no puede ser 0.';
+                resultado.innerHTML = 'En Valor base 1, el denominador (B + C + D) no puede ser 0.';
                 comparacion.style.display = 'none';
                 return;
             } else {
                 porcentaje1 = (a1 / denom1) * 100;
             }
-            if (recibo2Visible) {
+            if (valor2Visible) {
                 var a2 = parseFloat(document.getElementById('input-a2').value) || 0;
                 var b2 = parseFloat(document.getElementById('input-b2').value) || 0;
                 var c2 = parseFloat(document.getElementById('input-c2').value) || 0;
@@ -162,21 +161,21 @@
                 var denom2 = b2 + c2 + d2;
                 if (denom2 === 0) {
                     resultado.style.display = 'block';
-                    resultado.innerHTML = 'En Recibo 2, el denominador (B + C + D) no puede ser 0.';
+                    resultado.innerHTML = 'En Valor base 2, el denominador (B + C + D) no puede ser 0.';
                     comparacion.style.display = 'none';
                     return;
                 }
                 porcentaje2 = (a2 / denom2) * 100;
                 resultado.style.display = 'block';
-                resultado.innerHTML = 'Recibo 1: <b>' + porcentaje1.toFixed(2) + '%</b><br>Recibo 2: <b>' + porcentaje2.toFixed(2) + '%</b>';
+                resultado.innerHTML = 'Valor base 1: <b>' + porcentaje1.toFixed(2) + '%</b><br>Valor base 2: <b>' + porcentaje2.toFixed(2) + '%</b>';
                 var dif = Math.abs(porcentaje1 - porcentaje2);
                 var texto = '';
                 if (dif < 0.01) {
                     texto = 'Ambos porcentajes son prácticamente iguales.';
                 } else if (porcentaje1 > porcentaje2) {
-                    texto = 'El porcentaje del Recibo 1 es mayor por <b>' + dif.toFixed(2) + '%</b>.';
+                    texto = 'El porcentaje del Valor base 1 es mayor por <b>' + dif.toFixed(2) + '%</b>.';
                 } else {
-                    texto = 'El porcentaje del Recibo 2 es mayor por <b>' + dif.toFixed(2) + '%</b>.';
+                    texto = 'El porcentaje del Valor base 2 es mayor por <b>' + dif.toFixed(2) + '%</b>.';
                 }
                 comparacion.style.display = 'block';
                 comparacion.innerHTML = texto;
@@ -197,7 +196,7 @@
                 el.addEventListener('input', calcularAdicionalAuto);
             }
         });
-        // Si el usuario muestra el segundo recibo, recalcular
+        // Si el usuario muestra el segundo valor base, recalcular
         document.getElementById('btn-agregar').addEventListener('click', function() {
             setTimeout(calcularAdicionalAuto, 100);
         });

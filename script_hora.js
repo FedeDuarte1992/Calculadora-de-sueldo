@@ -613,7 +613,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadFromURL();
 });
 
-// Cargar datos desde URL (para integración con analizador de recibos)
+// Cargar datos desde URL (p.ej. precarga de parámetros)
 function loadFromURL() {
     const urlParams = new URLSearchParams(window.location.search);
     
@@ -646,7 +646,7 @@ function loadFromURL() {
         mostrarTablaAntiguedad();
         mostrarMontoAntiguedad();
         calcularTotal();
-        showNotification('Datos cargados desde el analizador de recibos', 'success');
+        showNotification('Datos cargados desde la URL', 'success');
     }
 }
 
