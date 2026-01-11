@@ -5,36 +5,39 @@
 
 // Importar tablas de valores desde script_hora.js
 const valoresHoraCat = {
-    "A": {"junio":2750, "julio":2804, "agosto":2858, "septiembre":2912, "octubre":2966, "noviembre":3020},
-    "B": {"junio":2800, "julio":2855, "agosto":2910, "septiembre":2965, "octubre":3020, "noviembre":3074},
-    "C": {"junio":2854, "julio":2910, "agosto":2966, "septiembre":3022, "octubre":3078, "noviembre":3134},
-    "D": {"junio":2905, "julio":2962, "agosto":3019, "septiembre":3076, "octubre":3133, "noviembre":3190},
-    "E": {"junio":2964, "julio":3022, "agosto":3080, "septiembre":3138, "octubre":3197, "noviembre":3255},
-    "F": {"junio":3021, "julio":3080, "agosto":3140, "septiembre":3199, "octubre":3258, "noviembre":3317},
-    "G": {"junio":3115, "julio":3176, "agosto":3237, "septiembre":3298, "octubre":3359, "noviembre":3420},
-    "H": {"junio":3182, "julio":3245, "agosto":3307, "septiembre":3370, "octubre":3432, "noviembre":3494, "diciembre" :3494}
+    "A": { "enero25": 2546, "febrero25": 2583, "marzo25": 2621, "abril25": 2658, "mayo25": 2696, "junio25": 2750, "julio25": 2804, "agosto25": 2858, "septiembre25": 2912, "octubre25": 2966, "noviembre25": 3020, "diciembre25": 3080, "enero26": 3141, "febrero26": 3141, "marzo26": 3231 },
+    "B": { "enero25": 2593, "febrero25": 2631, "marzo25": 2669, "abril25": 2707, "mayo25": 2745, "junio25": 2800, "julio25": 2855, "agosto25": 2910, "septiembre25": 2965, "octubre25": 3020, "noviembre25": 3074, "diciembre25": 3135, "enero26": 3197, "febrero26": 3197, "marzo26": 3289 },
+    "C": { "enero25": 2643, "febrero25": 2682, "marzo25": 2721, "abril25": 2759, "mayo25": 2798, "junio25": 2854, "julio25": 2910, "agosto25": 2966, "septiembre25": 3022, "octubre25": 3078, "noviembre25": 3134, "diciembre25": 3197, "enero26": 3259, "febrero26": 3259, "marzo26": 3353 },
+    "D": { "enero25": 2690, "febrero25": 2729, "marzo25": 2769, "abril25": 2808, "mayo25": 2848, "junio25": 2905, "julio25": 2962, "agosto25": 3019, "septiembre25": 3076, "octubre25": 3133, "noviembre25": 3190, "diciembre25": 3254, "enero26": 3318, "febrero26": 3318, "marzo26": 3413 },
+    "E": { "enero25": 2745, "febrero25": 2785, "marzo25": 2826, "abril25": 2866, "mayo25": 2906, "junio25": 2964, "julio25": 3022, "agosto25": 3080, "septiembre25": 3138, "octubre25": 3197, "noviembre25": 3255, "diciembre25": 3320, "enero26": 3385, "febrero26": 3385, "marzo26": 3483 },
+    "F": { "enero25": 2798, "febrero25": 2839, "marzo25": 2880, "abril25": 2921, "mayo25": 2962, "junio25": 3021, "julio25": 3080, "agosto25": 3140, "septiembre25": 3199, "octubre25": 3258, "noviembre25": 3317, "diciembre25": 3383, "enero26": 3450, "febrero26": 3450, "marzo26": 3549 },
+    "G": { "enero25": 2885, "febrero25": 2927, "marzo25": 2969, "abril25": 3012, "mayo25": 3054, "junio25": 3115, "julio25": 3176, "agosto25": 3237, "septiembre25": 3298, "octubre25": 3359, "noviembre25": 3420, "diciembre25": 3488, "enero26": 3557, "febrero26": 3557, "marzo26": 3659 },
+    "H": { "enero25": 2947, "febrero25": 2990, "marzo25": 3033, "abril25": 3077, "mayo25": 3120, "junio25": 3182, "julio25": 3245, "agosto25": 3307, "septiembre25": 3370, "octubre25": 3432, "noviembre25": 3494, "diciembre25": 3564, "enero26": 3634, "febrero26": 3634, "marzo26": 3739 }
 };
 
 const valoresAntiguedad = {
-    1: {"junio": 25, "julio": 27, "agosto": 28, "septiembre": 28, "octubre": 28, "noviembre": 28},
-    3: {"junio": 37, "julio": 39, "agosto": 41, "septiembre": 41, "octubre": 41, "noviembre": 41},
-    5: {"junio": 50, "julio": 53, "agosto": 56, "septiembre": 56, "octubre": 56, "noviembre": 56},
-    7: {"junio": 68, "julio": 72, "agosto": 76, "septiembre": 76, "octubre": 76, "noviembre": 76},
-    9: {"junio": 81, "julio": 86, "agosto": 91, "septiembre": 91, "octubre": 91, "noviembre": 91},
-    12: {"junio": 108, "julio": 114, "agosto": 121, "septiembre": 121, "octubre": 121, "noviembre": 121},
-    15: {"junio": 130, "julio": 138, "agosto": 146, "septiembre": 146, "octubre": 146, "noviembre": 146},
-    18: {"junio": 152, "julio": 161, "agosto": 170, "septiembre": 170, "octubre": 170, "noviembre": 170},
-    22: {"junio": 175, "julio": 186, "agosto": 196, "septiembre": 196, "octubre": 196, "noviembre": 196},
-    26: {"junio": 198, "julio": 210, "agosto": 222, "septiembre": 222, "octubre": 222, "noviembre": 222},
-    30: {"junio": 217, "julio": 230, "agosto": 243, "septiembre": 243, "octubre": 243, "noviembre": 243},
-    35: {"junio": 238, "julio": 252, "agosto": 267, "septiembre": 267, "octubre": 267, "noviembre": 267},
-    40: {"junio": 261, "julio": 277, "agosto": 292, "septiembre": 292, "octubre": 292, "noviembre": 292, "diciembre" :292}
+    1:  { "enero25": 25, "julio25": 27, "septiembre25": 28, "enero26": 29, "marzo26": 30 },
+    3:  { "enero25": 37, "julio25": 39, "septiembre25": 41, "enero26": 42, "marzo26": 43 },
+    5:  { "enero25": 50, "julio25": 53, "septiembre25": 56, "enero26": 58, "marzo26": 60 },
+    7:  { "enero25": 68, "julio25": 72, "septiembre25": 76, "enero26": 78, "marzo26": 81 },
+    9:  { "enero25": 81, "julio25": 86, "septiembre25": 91, "enero26": 93, "marzo26": 96 },
+    12: { "enero25": 108, "julio25": 114, "septiembre25": 121, "enero26": 124, "marzo26": 128 },
+    15: { "enero25": 130, "julio25": 138, "septiembre25": 146, "enero26": 150, "marzo26": 155 },
+    18: { "enero25": 152, "julio25": 161, "septiembre25": 170, "enero26": 174, "marzo26": 179 },
+    22: { "enero25": 175, "julio25": 186, "septiembre25": 196, "enero26": 201, "marzo26": 207 },
+    26: { "enero25": 198, "julio25": 210, "septiembre25": 222, "enero26": 228, "marzo26": 235 },
+    30: { "enero25": 217, "julio25": 230, "septiembre25": 243, "enero26": 249, "marzo26": 256 },
+    35: { "enero25": 238, "julio25": 252, "septiembre25": 267, "enero26": 273, "marzo26": 281 },
+    40: { "enero25": 261, "julio25": 277, "septiembre25": 292, "enero26": 300, "marzo26": 309 }
 };
 
-// Suma no remunerativa por mes
 const SUMA_NO_REMUN = {
-    'enero': 210000, 'febrero': 210000, 'marzo': 210000, 'abril': 210000, 'mayo': 210000,
-    'junio': 315000, 'julio': 210000, 'agosto': 210000, 'septiembre': 210000, 'octubre': 210000, 'noviembre': 210000, 'diciembre': 210000
+    'enero25': 210000, 'febrero25': 210000, 'marzo25': 210000, 'abril25': 210000, 'mayo25': 210000,
+    'junio25': 315000, 'julio25': 210000, 'agosto25': 210000, 'septiembre25': 210000, 'octubre25': 210000, 'noviembre25': 210000, 
+    'diciembre25': 315000,
+    'enero26': 210000, 
+    'febrero26': 210000,
+    'marzo26': 210000
 };
 
 // Variables globales
