@@ -495,23 +495,23 @@ body::before {
 
 /* --- CONTENEDOR PRINCIPAL --- */
 .container {
-    max-width: 1000px;
-    margin: 20px auto;
-    padding: 20px;
+    max-width: 900px;
+    margin: 16px auto;
+    padding: 12px;
     background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-}
+    border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+} 
 
 /* --- PASOS DEL FORMULARIO --- */
 .step-box {
     background: #f8f9fa;
     border: 1px solid #e9ecef;
     border-radius: 8px;
-    padding: 20px;
-    margin: 15px 0;
+    padding: 12px;
+    margin: 8px 0;
     text-align: center;
-}
+} 
 
 .step-box p {
     margin: 0 0 15px 0;
@@ -642,13 +642,13 @@ body::before {
 
 /* --- CALENDARIO --- */
 .calendar-container {
-    max-width: 800px;
-    margin: 30px auto;
+    max-width: 740px;
+    margin: 18px auto;
     background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    padding: 20px;
-}
+    border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    padding: 12px;
+} 
 
 .calendar-header {
     display: flex;
@@ -700,7 +700,7 @@ body::before {
 }
 
 .calendar-day {
-    min-height: 80px;
+    min-height: 70px;
     border: 1px solid #e9ecef;
     border-radius: 6px;
     padding: 5px;
@@ -945,6 +945,32 @@ body::before {
     border-color: #1976d2;
     box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.1);
 }
+
+/* --- LAYOUT COMPACTO: etiquetas y controles en línea --- */
+.form-row-inline {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.form-row-inline label {
+    display: inline-block;
+    width: 120px;
+    margin-bottom: 0;
+    font-weight: 600;
+    color: #333;
+    text-align: left;
+}
+.form-row-inline select,
+.form-row-inline input {
+    width: auto;
+    min-width: 110px;
+    flex: 1 1 auto;
+}
+
+@media (max-width: 600px) {
+    .form-row-inline { flex-direction: column; align-items: stretch; }
+    .form-row-inline label { width: auto; }
+} 
 
 /* --- ANIMACIONES --- */
 .animated-fadein {
