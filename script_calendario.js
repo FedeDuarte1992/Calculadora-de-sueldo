@@ -78,8 +78,9 @@ function saveConfiguration() {
         adicional: document.getElementById('adicional-input').value,
         turno: document.getElementById('turno-select').value,
         extras: document.getElementById('extras-input').value,
-        presentismo: document.getElementById('presentismo-select').value
-    };
+        presentismo: document.getElementById('presentismo-select').value,
+        bono: document.getElementById('bono') ? document.getElementById('bono').value : 0
+    }; 
     localStorage.setItem('salaryCalcConfig', JSON.stringify(config));
 }
 
@@ -94,9 +95,16 @@ function loadSavedConfiguration() {
         if (config.turno) document.getElementById('turno-select').value = config.turno;
         if (config.extras) document.getElementById('extras-input').value = config.extras;
         if (config.presentismo) document.getElementById('presentismo-select').value = config.presentismo;
+        if (config.bono) {
+            const bonoInput = document.getElementById('bono');
+            if (bonoInput) {
+                bonoInput.value = config.bono;
+                document.querySelector(`#bono-group [data-value="${config.bono}"]`)?.classList.add('active');
+            }
+        }
         updateSelectedValues();
     }
-}
+} 
 
 // Configurar event listeners
 function setupEventListeners() {
@@ -114,7 +122,38 @@ function setupEventListeners() {
             });
         }
     });
-}
+
+    // Configurar botones tipo toggle (ej: Bono)
+    const configurarBotones = (selector, inputId) => {
+        const botones = document.querySelectorAll(selector);
+        if (!botones || botones.length === 0) return;
+        botones.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const input = document.getElementById(inputId);
+                if (btn.classList.contains('active')) {
+                    btn.classList.remove('active');
+                    if (input) input.value = 0;
+                } else {
+                    botones.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    if (input) input.value = btn.getAttribute('data-value');
+                }
+                updateSelectedValues();
+                saveConfiguration();
+            });
+        });
+        // Activar primer botón por defecto si no hay valor guardado
+        const input = document.getElementById(inputId);
+        if (input && !input.value) {
+            const firstBtn = document.querySelector(selector);
+            if (firstBtn) {
+                firstBtn.classList.add('active');
+                input.value = firstBtn.getAttribute('data-value');
+            }
+        }
+    };
+    configurarBotones('.bono-btn', 'bono');
+} 
 
 // Cargar opciones de antigüedad
 function loadAntiguedadOptions() {
@@ -272,8 +311,12 @@ function updateSelectedValues() {
         if (adicional > 0) html += `<strong>Adicional:</strong> ${adicional}% | `;
         if (extras > 0) html += `<strong>Horas extras:</strong> ${extras}h | `;
         if (presentismo) html += `<strong>Presentismo:</strong> ${(parseFloat(presentismo) * 100).toFixed(0)}% | `;
+        const bono = document.getElementById('bono') ? document.getElementById('bono').value : 0;
+        if (bono && parseFloat(bono) > 0) {
+            html += `<strong>Bono:</strong> $${parseFloat(bono).toLocaleString('es-AR')} | `;
+        }
         
-        // Mostrar valor hora si está disponible (basado en mes y año del calendario)
+        // Mostrar valor hora si está disponible (basado en mes y año del calendario) 
         if (categoria && antiguedad) {
             const calendarMonth = currentDate.getMonth() + 1;
             const calendarYear = currentDate.getFullYear();
@@ -635,7 +678,8 @@ function mostrarResultados(detallesPorDia) {
     // Obtener mes para suma no remunerativa
     const primerDia = detallesPorDia[0];
     let sumaNoRemun = 0;
-    if (segundaQuincena.dias > 0 && primerDia) {
+    const bonoSelected = parseFloat(document.getElementById('bono') ? document.getElementById('bono').value : 0) || 0;
+    if (segundaQuincena.dias > 0 && primerDia && bonoSelected > 0) {
         const monthKey = getMonthKey(primerDia.mes, primerDia.año);
         sumaNoRemun = SUMA_NO_REMUN[monthKey] || 0;
     }
