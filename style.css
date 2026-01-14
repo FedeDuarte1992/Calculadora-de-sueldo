@@ -159,6 +159,21 @@ a { color: inherit; }
     .hora-input, .adicional-input, .calc-input { width: 100%; }
     .main-title { text-align:center; }
     .subtitle, .description { text-align:center; }
+
+    /* Reducir selects/inputs a la mitad en móviles para evitar distorsión */
+    .form-row-inline select,
+    .form-row-inline input {
+        max-width: 50%;
+        width: 50%;
+        box-sizing: border-box;
+        align-self: flex-start;
+    }
+
+    /* Si se usan grupos de botones, reducir su tamaño visual */
+    .button-group button {
+        padding: 6px 10px;
+        font-size: 0.9em;
+    }
 }
 
 .footer-info {
