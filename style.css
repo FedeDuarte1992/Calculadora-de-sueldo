@@ -1,8 +1,8 @@
 /* =================================================================
-   DISEÑO VISUAL MODERNO Y MEJORADO
+   DISEÑO VISUAL MODERNO Y MEJORADO - LIGHT & DARK MODE
    ================================================================= */
 
-/* Tipografía y paleta general */
+/* Tipografía y paleta general - LIGHT MODE (por defecto) */
 :root {
     --primary-color: #2563eb;
     --primary-light: #60a5fa;
@@ -22,6 +22,26 @@
     --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
+/* Tipografía y paleta general - DARK MODE */
+:root[data-theme="dark"] {
+    --primary-color: #60a5fa;
+    --primary-light: #93c5fd;
+    --primary-dark: #1e40af;
+    --secondary-color: #fbbf24;
+    --success-color: #34d399;
+    --danger-color: #f87171;
+    --text-primary: #f9fafb;
+    --text-secondary: #d1d5db;
+    --bg-primary: #1f2937;
+    --bg-secondary: #111827;
+    --bg-tertiary: #374151;
+    --border-color: #4b5563;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
+}
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     color: var(--text-primary);
@@ -31,11 +51,13 @@ body {
     margin: 0;
     padding: 0;
     line-height: 1.6;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 a {
     color: inherit;
     text-decoration: none;
+    transition: color 0.3s ease;
 }
 
 /* --- HEADER Y NAVEGACIÓN MEJORADA --- */
@@ -107,6 +129,34 @@ a {
     font-size: 1.1rem;
     display: flex;
     align-items: center;
+}
+
+/* --- BOTÓN DE TEMA (LIGHT/DARK MODE) --- */
+.theme-toggle {
+    background: rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-left: auto;
+    padding: 0;
+}
+
+.theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: scale(1.1) rotate(20deg);
+}
+
+.theme-toggle:active {
+    transform: scale(0.95);
 }
 
 /* --- ESTILOS PARA PÁGINA PRINCIPAL MEJORADA --- */
@@ -312,6 +362,13 @@ a {
         font-size: 0.9rem;
     }
 
+    .theme-toggle {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+        margin-left: 0.5rem;
+    }
+
     .main-title {
         font-size: 2.5rem;
     }
@@ -359,6 +416,12 @@ a {
 
     .feature-card p {
         font-size: 0.95rem;
+    }
+
+    .theme-toggle {
+        width: 32px;
+        height: 32px;
+        font-size: 0.9rem;
     }
 }
 
