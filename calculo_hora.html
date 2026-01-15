@@ -10,38 +10,38 @@
     <!-- NAVEGACIÓN PRINCIPAL -->
     <header class="main-header animated-fadein">
         <nav class="main-nav">
-            <a href="index.html" class="nav-link nav-logo">Inicio</a>
-            <a href="calculo_hora.html" class="nav-link active">Calcular por hora</a>
-            <a href="calcular_calendario.html" class="nav-link">Calcular calendario</a>
-            <a href="calculadora_adicional.html" class="nav-link">Adicional sobre básico</a>
+            <a href="index.html" class="nav-link nav-logo">🏠 Inicio</a>
+            <a href="calculo_hora.html" class="nav-link active">⏰ Calcular por hora</a>
+            <a href="calcular_calendario.html" class="nav-link">📅 Calcular calendario</a>
+            <a href="calculadora_adicional.html" class="nav-link">➕ Adicional sobre básico</a>
         </nav>
     </header>
 
     <!-- CONTENEDOR PRINCIPAL DE CÁLCULO POR HORAS -->
     <div class="calc-hora-container">
-        <h2 class="calc-hora-title">Cálculo por Hora</h2>
+        <h2 class="calc-hora-title">⏰ Cálculo por Hora</h2>
         
         <!-- FORMULARIO DE CÁLCULO -->
         <div class="calc-form">
             <!-- SELECCIÓN DE CATEGORÍA -->
             <div class="form-row">
-                <label class="form-label">Categoría</label>
+                <label class="form-label">🏢 Categoría</label>
                 <div class="button-group" id="categoria-group">
-                    <button type="button" class="categoria-btn" data-value="A">A</button>
-                    <button type="button" class="categoria-btn" data-value="B">B</button>
-                    <button type="button" class="categoria-btn" data-value="C">C</button>
-                    <button type="button" class="categoria-btn" data-value="D">D</button>
-                    <button type="button" class="categoria-btn" data-value="E">E</button>
-                    <button type="button" class="categoria-btn" data-value="F">F</button>
-                    <button type="button" class="categoria-btn" data-value="G">G</button>
-                    <button type="button" class="categoria-btn" data-value="H">H</button>
+                    <button type="button" class="categoria-btn" data-value="A" title="Categoría A">A</button>
+                    <button type="button" class="categoria-btn" data-value="B" title="Categoría B">B</button>
+                    <button type="button" class="categoria-btn" data-value="C" title="Categoría C">C</button>
+                    <button type="button" class="categoria-btn" data-value="D" title="Categoría D">D</button>
+                    <button type="button" class="categoria-btn" data-value="E" title="Categoría E">E</button>
+                    <button type="button" class="categoria-btn" data-value="F" title="Categoría F">F</button>
+                    <button type="button" class="categoria-btn" data-value="G" title="Categoría G">G</button>
+                    <button type="button" class="categoria-btn" data-value="H" title="Categoría H">H</button>
                 </div>
                 <input type="hidden" id="categoria" value="">
             </div>
 
             <!-- SELECCIÓN DE MES -->
             <div class="form-row">
-                <label class="form-label">Mes</label>
+                <label class="form-label">📅 Mes</label>
                 <div class="button-group" id="mes-group">
                     <button type="button" class="mes-btn" data-value="junio25">Jun</button>
                     <button type="button" class="mes-btn" data-value="julio25">Jul</button>
@@ -51,7 +51,7 @@
                     <button type="button" class="mes-btn" data-value="noviembre25">Nov</button>
                     <button type="button" class="mes-btn" data-value="diciembre25">Dic</button>
                     <button type="button" class="mes-btn" data-value="enero26">Ene</button>
-                    <button type="button" class="mes-btn" data-value="enero26">Feb</button>
+                    <button type="button" class="mes-btn" data-value="febrero26">Feb</button>
                     <button type="button" class="mes-btn" data-value="marzo26">Mar</button>
                 </div>
                 <input type="hidden" id="mes" value="">
@@ -59,7 +59,7 @@
 
             <!-- VALOR HORA MANUAL -->
             <div class="form-row">
-                <label class="form-label">Ingresar valor hora manualmente</label>
+                <label class="form-label">💰 Valor hora (manual)</label>
                 <div class="manual-input-group">
                     <input type="number" id="valor-hora-manual" class="manual-input" min="0" step="0.01" placeholder="Ej: 1234.56" disabled>
                     <button type="button" id="usar-valor-manual" class="manual-btn">Usar</button>
@@ -72,13 +72,13 @@
 
             <!-- VALOR HORA CALCULADO -->
             <div class="form-row">
-                <label class="form-label">Valor Hora</label>
+                <label class="form-label">💵 Valor Hora</label>
                 <span id="valor-hora-mostrar" class="valor-hora-display">$0</span>
             </div>
 
             <!-- SELECCIÓN DE ANTIGÜEDAD -->
             <div class="form-row">
-                <label class="form-label">Antigüedad (años)</label>
+                <label class="form-label">📆 Antigüedad (años)</label>
                 <div class="button-group" id="antiguedad-group">
                     <button type="button" class="antiguedad-btn" data-value="1">1</button>
                     <button type="button" class="antiguedad-btn" data-value="3">3</button>
@@ -102,7 +102,7 @@
 
             <!-- SECCIÓN DE HORAS TRABAJADAS -->
             <div class="horas-section">
-                <h3 class="section-title">Horas Trabajadas
+                <h3 class="section-title">⏱️ Horas Trabajadas
                     <span class="tooltip-trigger" tabindex="0">
                         <span class="help-dot" tabindex="0">?</span>
                         <span class="tooltip" id="tooltip-turnos">

@@ -7,97 +7,129 @@
     <link rel="stylesheet" href="style.css">
     <style>
         .calc-container {
-            max-width: 480px;
-            margin: 48px auto;
-            padding: 36px 28px;
-            background: #fffde7;
-            border-radius: 18px;
-            box-shadow: 0 4px 32px #ffd60044;
+            max-width: 500px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px rgba(245, 158, 11, 0.2);
             display: flex;
             flex-direction: column;
-            gap: 22px;
+            gap: 1.5rem;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            animation: fadeInUp 0.6s ease-out;
         }
         .calc-title {
-            color: #f9a825;
+            color: #d97706;
             text-align: center;
-            font-size: 1.7em;
-            font-weight: 700;
-            margin-bottom: 8px;
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #d97706, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         .calc-label {
-            font-weight: 500;
-            color: #f9a825;
+            font-weight: 600;
+            color: #92400e;
+            font-size: 0.95rem;
         }
         .calc-input {
-            width: 120px;
-            padding: 8px 10px;
-            border-radius: 8px;
-            border: 1.5px solid #ffe082;
-            background: #fffbe7;
-            font-weight: bold;
-            color: #f9a825;
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: 2px solid #fbbf24;
+            background: white;
+            font-weight: 600;
+            color: #d97706;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+        .calc-input:focus {
+            outline: none;
+            border-color: #d97706;
+            box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.1);
+            background: #fffbeb;
         }
         .calc-btn {
-            padding: 10px 22px;
-            border-radius: 8px;
-            background: #f9a825;
-            color: #fff;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
             border: none;
-            font-weight: 600;
-            font-size: 1.1em;
+            font-weight: 700;
+            font-size: 1rem;
             cursor: pointer;
-            margin-top: 10px;
+            margin-top: 0.75rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+        .calc-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);
+        }
+        .calc-btn:active {
+            transform: translateY(0);
         }
         .calc-result {
-            margin-top: 18px;
-            font-size: 1.18em;
-            color: #f9a825;
-            font-weight: 600;
+            margin-top: 1rem;
+            font-size: 1.3rem;
+            color: white;
+            font-weight: 700;
             text-align: center;
-            background: #fffde7;
-            border-radius: 10px;
-            padding: 12px 0;
-            box-shadow: 0 2px 12px #ffd60022;
+            background: linear-gradient(135deg, #d97706, #f59e0b);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+            animation: fadeInUp 0.4s ease-out;
         }
         .calc-formula {
-            font-size: 0.98em;
-            color: #333;
-            background: #fffbe7;
-            border: 1px solid #ffe082;
-            border-radius: 8px;
-            padding: 10px 14px;
-            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: #92400e;
+            background: rgba(255, 255, 255, 0.7);
+            border: 2px solid #fbbf24;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            line-height: 1.6;
         }
         .calc-compare {
-            margin-top: 10px;
-            font-size: 1em;
+            margin-top: 1rem;
+            font-size: 0.95rem;
             color: #1976d2;
-            background: #e3f2fd;
-            border-radius: 8px;
-            padding: 10px 0;
+            background: linear-gradient(135deg, #dbeafe, #e0e7ff);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            border-left: 4px solid #1976d2;
         }
         .calc-block {
-            margin-bottom: 10px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #ffe082;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #fbbf24;
+        }
+        .calc-block:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
         }
     </style>
 </head>
 <body>
     <header class="main-header animated-fadein">
         <nav class="main-nav">
-            <a href="index.html" class="nav-link nav-logo">Inicio</a>
-            <a href="calculo_hora.html" class="nav-link">Calcular por hora</a>
-            <a href="calcular_calendario.html" class="nav-link">Calcular calendario</a>
-            <a href="calculadora_adicional.html" class="nav-link active">Adicional sobre básico</a>
+            <a href="index.html" class="nav-link nav-logo">🏠 Inicio</a>
+            <a href="calculo_hora.html" class="nav-link">⏰ Calcular por hora</a>
+            <a href="calcular_calendario.html" class="nav-link">📅 Calcular calendario</a>
+            <a href="calculadora_adicional.html" class="nav-link active">➕ Adicional sobre básico</a>
         </nav>
     </header>
-    <div class="calc-container animated-fadein">
-        <div class="calc-title">Calculadora de Adicional sobre Básico</div>
+    <div class="calc-container">
+        <div class="calc-title">➕ Calculadora de Adicional</div>
         <div class="calc-formula">
-            Este porcentaje se calcula así:<br>
-            <b>porcentaje = (A ÷ (B + C + D)) × 100</b><br>
-            Donde:<br>
+            <b>Fórmula de cálculo:</b><br>
+            porcentaje = (Adicional ÷ (Básico + Nocturnas + Otros)) × 100<br><br>
+            <b>Donde:</b><br>
             <b>A</b>: adicional pagado<br>
             <b>B</b>: sueldo básico<br>
             <b>C</b>: nocturno<br>

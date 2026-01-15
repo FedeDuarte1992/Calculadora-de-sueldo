@@ -5,54 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calcular Calendario - Sistema de Cálculo de Sueldos</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        @keyframes slideOut {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(100%); opacity: 0; }
-        }
-        .calendar-day {
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-        .calendar-day:hover {
-            transform: scale(1.05);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-        }
-        .selected-day {
-            animation: pulse 0.6s ease-in-out;
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-        .btn-group button {
-            transition: all 0.3s ease;
-        }
-        .btn-group button:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-        .form-group select, .form-group input {
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-        .form-group select:focus, .form-group input:focus {
-            border-color: #1976d2;
-            box-shadow: 0 0 0 3px rgba(25,118,210,0.1);
-        }
-    </style>
 </head>
 <body>
     <header class="main-header animated-fadein">
         <nav class="main-nav">
-            <a href="index.html" class="nav-link nav-logo">Inicio</a>
-            <a href="calculo_hora.html" class="nav-link">Calcular por hora</a>
-            <a href="calcular_calendario.html" class="nav-link active">Calcular calendario</a>
-            <a href="calculadora_adicional.html" class="nav-link">Adicional sobre básico</a>
+            <a href="index.html" class="nav-link nav-logo">🏠 Inicio</a>
+            <a href="calculo_hora.html" class="nav-link">⏰ Calcular por hora</a>
+            <a href="calcular_calendario.html" class="nav-link active">📅 Calcular calendario</a>
+            <a href="calculadora_adicional.html" class="nav-link">➕ Adicional sobre básico</a>
         </nav>
     </header>
 
