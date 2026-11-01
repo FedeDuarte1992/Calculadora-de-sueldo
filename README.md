@@ -18,6 +18,11 @@ Un sistema web completo para calcular salarios basado en diferentes modalidades 
 - Cálculo de presentismo configurable
 
 ### Cálculo por Día
+- Carga de días trabajados por turno para estimar automáticamente horas y salario
+- Distribución automática de horas normales, nocturnas y extras de sábado/domingo
+- Configuración de categoría, mes, antigüedad y presentismo
+
+### Control de Asistencia
 - Registro de asistencia diaria
 - Control de horarios por turno (mañana, tarde, noche)
 - Cálculo automático de tardanzas
@@ -37,14 +42,17 @@ Un sistema web completo para calcular salarios basado en diferentes modalidades 
 Calcular sueldo/
 ├── index.html              # Página principal
 ├── calculo_hora.html        # Cálculo por horas
-├── calcular_dia.html        # Control de asistencia y cálculo por día
+├── calcular_por_dia.html    # Estimación ingresando días por turno
+├── calcular_dia.html        # Control de asistencia
 ├── calculadora_adicional.html # Calculadora de adicional
 ├── calcular_calendario.html  # Cálculo por calendario
 ├── style.css               # Estilos principales
 ├── script.js               # Script principal (cálculo por día)
 ├── script_hora.js          # Script para cálculo por horas
 ├── script_calendario.js    # Script para cálculo por calendario
+├── calcular_por_dia.js     # Conversión de días trabajados a horas
 ├── salary-data.js          # Tablas salariales y adicionales compartidas
+├── salary-calculator.js    # Fórmula salarial compartida
 ├── utils.js                # Utilidades comunes
 └── README.md               # Este archivo
 ```
@@ -85,11 +93,16 @@ Calcular sueldo/
 7. El sistema calculará automáticamente tu salario
 
 ### Cálculo por Día
-1. Selecciona tu turno de trabajo
+1. Selecciona categoría, mes, antigüedad y presentismo
+2. Ingresa la cantidad de días de lunes a viernes por cada turno
+3. Completa los días de sábado por mañana/tarde y domingos por noche
+4. El cálculo de horas y salario se actualiza automáticamente
+
+### Control de Asistencia
+1. Selecciona el turno trabajado
 2. Indica si fichaste temprano o tarde
-3. Ingresa tu categoría y antigüedad
-4. Especifica si hiciste horas extras
-5. El sistema registrará tu día y calculará quincenas
+3. Ingresa categoría, antigüedad y horas extras
+4. El sistema registra el día y calcula las quincenas
 
 ### Calculadora de Adicional
 1. Ingresa el sueldo básico y el porcentaje adicional

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcular por día - Calculadora de Sueldo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="main-header animated-fadein">
+        <nav class="main-nav">
+            <a href="index.html" class="nav-link nav-logo">🏠 Inicio</a>
+            <a href="calculo_hora.html" class="nav-link">⏰ Calcular por hora</a>
+            <a href="calcular_por_dia.html" class="nav-link active">🧮 Calcular por día</a>
+            <a href="calcular_dia.html" class="nav-link">🗓️ Asistencia diaria</a>
+            <a href="calcular_calendario.html" class="nav-link">📅 Calcular calendario</a>
+            <a href="calculadora_adicional.html" class="nav-link">➕ Adicional sobre básico</a>
+        </nav>
+    </header>
+
+    <main class="container animated-fadein day-calculator">
+        <h1 class="main-title">Calcular por día</h1>
+        <p>Indica cuántos días trabajaste en cada turno. Las horas se calculan automáticamente según el día de la semana.</p>
+
+        <section class="step-box">
+            <h2>1. Datos del convenio</h2>
+            <div class="day-config-grid">
+                <div class="form-group">
+                    <label for="day-category">Categoría</label>
+                    <select id="day-category">
+                        <option value="">Selecciona categoría</option>
+                        <option value="A">A</option><option value="B">B</option>
+                        <option value="C">C</option><option value="D">D</option>
+                        <option value="E">E</option><option value="F">F</option>
+                        <option value="G">G</option><option value="H">H</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="day-month">Mes trabajado</label>
+                    <input type="month" id="day-month" min="2025-01" max="2026-12">
+                </div>
+                <div class="form-group">
+                    <label for="day-seniority">Antigüedad</label>
+                    <select id="day-seniority">
+                        <option value="0">Sin adicional</option>
+                        <option value="1">1 año</option><option value="3">3 años</option>
+                        <option value="5">5 años</option><option value="7">7 años</option>
+                        <option value="9">9 años</option><option value="12">12 años</option>
+                        <option value="15">15 años</option><option value="18">18 años</option>
+                        <option value="22">22 años</option><option value="26">26 años</option>
+                        <option value="30">30 años</option><option value="35">35 años</option>
+                        <option value="40">40 años</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="day-additional">Adicional sobre básico (%)</label>
+                    <input type="number" id="day-additional" min="0" max="100" step="0.1" value="0">
+                </div>
+                <div class="form-group">
+                    <label for="day-attendance">Presentismo</label>
+                    <select id="day-attendance">
+                        <option value="0.20">20%</option>
+                        <option value="0.14">14%</option>
+                        <option value="0.07">7%</option>
+                        <option value="0">0%</option>
+                    </select>
+                </div>
+                <label class="day-bonus-option">
+                    <input type="checkbox" id="day-bonus">
+                    Incluir suma no remunerativa del mes
+                </label>
+            </div>
+            <p id="day-rate-note" class="day-note" aria-live="polite"></p>
+        </section>
+
+        <section class="step-box">
+            <h2>2. Días trabajados por turno</h2>
+            <p class="day-note">Ingresa días completos. Para sábados se habilitan mañana y tarde; para domingos, noche, según los horarios informados.</p>
+            <div class="day-count-grid">
+                <div class="day-count-heading">Día de trabajo</div>
+                <div class="day-count-heading">Mañana</div>
+                <div class="day-count-heading">Tarde</div>
+                <div class="day-count-heading">Noche</div>
+                <label for="weekday-morning">Lunes a viernes</label>
+                <input type="number" id="weekday-morning" class="day-count" min="0" step="1" value="0" aria-label="Días de lunes a viernes turno mañana">
+                <input type="number" id="weekday-afternoon" class="day-count" min="0" step="1" value="0" aria-label="Días de lunes a viernes turno tarde">
+                <input type="number" id="weekday-night" class="day-count" min="0" step="1" value="0" aria-label="Días de lunes a viernes turno noche">
+                <label for="saturday-morning">Sábados</label>
+                <input type="number" id="saturday-morning" class="day-count" min="0" step="1" value="0" aria-label="Sábados turno mañana">
+                <input type="number" id="saturday-afternoon" class="day-count" min="0" step="1" value="0" aria-label="Sábados turno tarde">
+                <span class="day-not-applicable" aria-label="No especificado">—</span>
+                <label for="sunday-night">Domingos</label>
+                <span class="day-not-applicable" aria-label="No especificado">—</span>
+                <span class="day-not-applicable" aria-label="No especificado">—</span>
+                <input type="number" id="sunday-night" class="day-count" min="0" step="1" value="0" aria-label="Domingos turno noche">
+            </div>
+            <div class="btn-group">
+                <button type="button" id="day-calculate">Calcular horas y salario</button>
+                <button type="button" id="day-clear" class="secondary">Limpiar días</button>
+            </div>
+        </section>
+
+        <section id="day-results" class="step-box day-results" aria-live="polite" hidden>
+            <h2>Resultado</h2>
+            <div id="day-hours-summary"></div>
+            <div id="day-wage-summary"></div>
+        </section>
+    </main>
+
+    <script src="utils.js"></script>
+    <script src="salary-data.js"></script>
+    <script src="salary-calculator.js"></script>
+    <script src="calcular_por_dia.js"></script>
+    <script src="theme-switcher.js"></script>
+</body>
+</html>

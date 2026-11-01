@@ -3,11 +3,12 @@ const fs = require('node:fs');
 const vm = require('node:vm');
 
 const context = {
-    document: { addEventListener() {} },
+    document: { addEventListener() {}, getElementById() { return null; } },
     console
 };
 vm.createContext(context);
 vm.runInContext(fs.readFileSync('salary-data.js', 'utf8'), context);
+vm.runInContext(fs.readFileSync('salary-calculator.js', 'utf8'), context);
 vm.runInContext(fs.readFileSync('script_calendario.js', 'utf8'), context);
 
 const rates = JSON.parse(JSON.stringify(vm.runInContext(
@@ -87,4 +88,30 @@ const noPresentismo = vm.runInContext(`calcularSalarioCalendario({
     monthKey: 'enero25'
 })`, context);
 assert.equal(noPresentismo.totalSinRetenciones, 8000);
-console.log('✅ Pruebas de tabla salarial y cálculo real del calendario aprobadas');
+
+const dayContext = {
+    document: { addEventListener() {}, getElementById() { return {}; } },
+    console
+};
+vm.createContext(dayContext);
+vm.runInContext(fs.readFileSync('salary-data.js', 'utf8'), dayContext);
+vm.runInContext(fs.readFileSync('salary-calculator.js', 'utf8'), dayContext);
+vm.runInContext(fs.readFileSync('calcular_por_dia.js', 'utf8'), dayContext);
+const dayHours = JSON.parse(JSON.stringify(vm.runInContext(`calculateWorkedHours([
+    { day: 'weekday', shift: 'morning', count: 2 },
+    { day: 'weekday', shift: 'afternoon', count: 3 },
+    { day: 'weekday', shift: 'night', count: 4 },
+    { day: 'saturday', shift: 'morning', count: 5 },
+    { day: 'saturday', shift: 'afternoon', count: 6 },
+    { day: 'sunday', shift: 'night', count: 7 }
+])`, dayContext)));
+assert.deepEqual(dayHours, {
+    normales: 72,
+    nocturnas: 73,
+    horasSabado: 47,
+    nocturnas50: 4,
+    nocturnas100: 20,
+    feriado: 0,
+    horas50: 0
+});
+console.log('✅ Pruebas salariales y conversión de días a horas aprobadas');

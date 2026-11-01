@@ -347,6 +347,81 @@ a {
 }
 
 /* --- RESPONSIVE MEJORADO --- */
+.day-calculator {
+    max-width: 900px;
+}
+
+.day-calculator .step-box h2 {
+    margin-top: 0;
+}
+
+.day-config-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 0.75rem 1rem;
+    align-items: end;
+}
+
+.day-config-grid .form-group {
+    margin-bottom: 0;
+}
+
+.day-bonus-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 44px;
+}
+
+.day-bonus-option input {
+    width: auto;
+}
+
+.day-count-grid {
+    display: grid;
+    grid-template-columns: minmax(150px, 1.5fr) repeat(3, minmax(75px, 1fr));
+    gap: 0.5rem;
+    align-items: center;
+    margin: 1rem 0;
+}
+
+.day-count-grid label {
+    font-weight: 600;
+}
+
+.day-count-grid input {
+    width: 100%;
+    min-width: 0;
+    padding: 0.55rem;
+}
+
+.day-count-heading {
+    font-weight: 700;
+    text-align: center;
+}
+
+.day-not-applicable {
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+.day-note {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.day-results h3 {
+    margin-bottom: 0.5rem;
+}
+
+.day-results p {
+    margin: 0.5rem 0;
+}
+
+.day-results li {
+    margin: 0.35rem 0;
+}
+
 @media (max-width: 768px) {
     :root {
         font-size: 14px;
@@ -1367,5 +1442,15 @@ a {
     .calc-hora-container {
         margin: 1rem;
         padding: 1.5rem 1rem;
+    }
+
+    .day-count-grid {
+        grid-template-columns: minmax(115px, 1.35fr) repeat(3, minmax(55px, 1fr));
+        gap: 0.35rem;
+        font-size: 0.9rem;
+    }
+
+    .day-count-grid input {
+        padding: 0.45rem 0.25rem;
     }
 }
