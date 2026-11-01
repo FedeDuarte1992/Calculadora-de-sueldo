@@ -72,71 +72,20 @@ const MINUTOS_TOLERANCIA_TARDE = 15;
  * Tabla salarial por categoría y mes
  * Valores actualizados según convenio vigente
  */
-const TABLA_SALARIAL = {
-    'A': {
-        'junio': 2750, 'julio': 2804, 'agosto': 2858, 'septiembre': 2912, 'octubre': 2966, 'noviembre': 3020
-    },
-    'B': {
-        'junio': 2800, 'julio': 2855, 'agosto': 2910, 'septiembre': 2965, 'octubre': 3020, 'noviembre': 3074
-    },
-    'C': {
-        'junio': 2854, 'julio': 2910, 'agosto': 2966, 'septiembre': 3022, 'octubre': 3078, 'noviembre': 3134
-    },
-    'D': {
-        'junio': 2905, 'julio': 2962, 'agosto': 3019, 'septiembre': 3076, 'octubre': 3133, 'noviembre': 3190
-    },
-    'E': {
-        'junio': 2964, 'julio': 3022, 'agosto': 3080, 'septiembre': 3138, 'octubre': 3197, 'noviembre': 3255
-    },
-    'F': {
-        'junio': 3021, 'julio': 3080, 'agosto': 3140, 'septiembre': 3199, 'octubre': 3258, 'noviembre': 3317
-    },
-    'G': {
-        'junio': 3115, 'julio': 3176, 'agosto': 3237, 'septiembre': 3298, 'octubre': 3359, 'noviembre': 3420
-    },
-    'H': {
-        'junio': 3182, 'julio': 3245, 'agosto': 3307, 'septiembre': 3370, 'octubre': 3432, 'noviembre': 3494
-    }
-};
+const TABLA_SALARIAL = SALARY_TABLES.hourly;
 
 /**
  * Suma no remunerativa por mes
  * Montos adicionales que no forman parte del salario básico
  */
-const SUMA_NO_REMUN = {
-    'enero': 210000,
-    'febrero': 210000,
-    'marzo': 210000,
-    'abril': 210000,
-    'mayo': 210000,
-    'junio': 315000, // 210000 + 105000
-    'julio': 210000,
-    'agosto': 210000,
-    'septiembre': 210000,
-    'octubre': 210000,
-    'noviembre': 210000,
-    'diciembre': 210000
-};
+const SUMA_NO_REMUN = SALARY_TABLES.nonRemunerative;
+const SUMA_NO_REMUN_DIFERIDA = SALARY_TABLES.deferredNonRemunerative;
 
 /**
  * Tabla de bonificación por antigüedad
  * Valores fijos por años de antigüedad
  */
-const TABLA_ANTIGUEDAD = {
-    1: 25,
-    3: 37,
-    5: 50,
-    7: 68,
-    9: 81,
-    12: 108,
-    15: 130,
-    18: 152,
-    22: 175,
-    26: 198,
-    30: 217,
-    35: 238,
-    40: 261
-};
+const TABLA_ANTIGUEDAD = SALARY_TABLES.seniority;
 
 
 /**
@@ -190,7 +139,7 @@ function calcularSalarioDiario(turno, valorHora, valorAntiguedad, adicionalBasic
         horas50: extraHours, // Horas extras como horas al 50%
         presentismo: 0.20, // 20% automático
         adicionalPorcentaje: adicionalBasicoPct,
-        antiguedadAnios: obtenerAniosAntiguedad(valorAntiguedad)
+        valorAntiguedad
     };
     
     return calcularTotalComoHora(datos);
@@ -248,23 +197,11 @@ function obtenerHorasPorTurno(turno, dayOfWeek) {
 }
 
 /**
- * Obtiene años de antigüedad desde el valor
- */
-function obtenerAniosAntiguedad(valorAntiguedad) {
-    for (const [anos, valor] of Object.entries(TABLA_ANTIGUEDAD)) {
-        if (valor === valorAntiguedad) {
-            return parseInt(anos);
-        }
-    }
-    return 0;
-}
-
-/**
  * CÁLCULO TOTAL USANDO LAS MISMAS FÓRMULAS QUE CALCULAR_HORA
  */
 function calcularTotalComoHora(datos) {
     let total = 0;
-    const valorAntiguedad = TABLA_ANTIGUEDAD[datos.antiguedadAnios] || 0;
+    const valorAntiguedad = datos.valorAntiguedad || 0;
     
     // Calcular horas normales
     let montoNormales = 0;
@@ -529,10 +466,6 @@ function formatCurrency(number) {
         maximumFractionDigits: 0
     }).format(number);
 }
-// Obtiene la bonificación por antigüedad según años
-function getBonificacionAntiguedad(antiguedad_anos) {
-    return TABLA_ANTIGUEDAD[antiguedad_anos] || 0;
-}
 // Función para ocultar todos los pasos de entrada
 function hideAllSteps() {
     stepSelectTurno.style.display = 'none';
@@ -712,8 +645,8 @@ function recordAttendance() {
             const currentMonthIndex = recordDayDate.getMonth();
             const currentMonthName = MONTH_NAMES[currentMonthIndex];
             const dayOfWeek = recordDayDate.getDay();
-            const valorHoraBase = getValorHoraBase(selectedCategory, currentMonthName);
-            const bonificacionPorAntiguedad = getBonificacionAntiguedad(selectedAntiguedad, currentMonthName);
+            const valorHoraBase = getValorHoraBase(selectedCategory, recordDayDate);
+            const bonificacionPorAntiguedad = getBonificacionAntiguedad(selectedAntiguedad, recordDayDate);
             if (valorHoraBase === undefined) return;
             // --- Lógica de feriado ---
             const feriado = isFeriado(recordDayDate);
@@ -814,8 +747,8 @@ function recordAttendance() {
     const currentMonthName = MONTH_NAMES[currentMonthIndex];
     const dayOfWeek = recordDayDate.getDay(); // 0 = Domingo, 1 = Lunes, ..., 6 = Sábado
 
-    const valorHoraBase = getValorHoraBase(selectedCategory, currentMonthName);
-    const bonificacionPorAntiguedad = getBonificacionAntiguedad(selectedAntiguedad);
+    const valorHoraBase = getValorHoraBase(selectedCategory, recordDayDate);
+    const bonificacionPorAntiguedad = getBonificacionAntiguedad(selectedAntiguedad, recordDayDate);
     if (valorHoraBase === undefined) {
         resultDisplay.textContent = `Error: No se encontraron datos salariales para la categoría ${selectedCategory} en el mes de ${currentMonthName}. Por favor, verifica la configuración.`;
         if (!isEditingMode) {
@@ -1084,8 +1017,8 @@ function applyScheduleToSelectedDays() {
         const currentMonthName = MONTH_NAMES[entryTime.getMonth()];
         const dayOfWeek = entryTime.getDay();
         // Calcular valores base
-        const valorHoraBase = TABLA_SALARIAL[categoria]?.[currentMonthName];
-        const bonificacionPorAntiguedad = getBonificacionAntiguedad(antiguedad);
+        const valorHoraBase = getValorHoraBase(categoria, entryTime);
+        const bonificacionPorAntiguedad = getBonificacionAntiguedad(antiguedad, entryTime);
         if (valorHoraBase === undefined) return;
         // Lógica de cálculo igual que en recordAttendance
         let valorHoraBaseDiurna = valorHoraBase;
@@ -1212,7 +1145,9 @@ function calculateQuincenaTotal() {
     let totalPrimera = 0, totalSegunda = 0, totalMes = 0;
     let diasPrimera = 0, diasSegunda = 0, diasMes = 0;
     let ausenciasPrimera = 0, ausenciasSegunda = 0, ausenciasMes = 0;
-    let sumaNoRemunerativaSegunda = SUMA_NO_REMUN[currentMonthName] || 0;
+    const monthKey = getSalaryMonthKey(currentCalendarDate);
+    let sumaNoRemunerativaSegunda = SUMA_NO_REMUN[monthKey] || 0;
+    const sumaNoRemunerativaDiferida = SUMA_NO_REMUN_DIFERIDA[monthKey] || 0;
 
     // Detalle de horas y valores por bloque
     function getDetalleHoras(records, start, end) {
@@ -1332,6 +1267,7 @@ function calculateQuincenaTotal() {
             <p>Total (sin suma no remunerativa): <strong>${formatCurrency(totalSegunda)}</strong></p>
             <p>Suma No Remunerativa: <strong>${formatCurrency(sumaNoRemunerativaSegunda)}</strong></p>
             <p>Total con suma no remunerativa: <strong>${formatCurrency(totalSegundaConNoRemun)}</strong></p>
+            ${sumaNoRemunerativaDiferida > 0 ? `<p>Suma no remunerativa diferida a enero 2027: <strong>${formatCurrency(sumaNoRemunerativaDiferida)}</strong></p>` : ''}
             <p> días trabajados: <strong>${diasSegunda}</strong></p>
             <p>Ausencias: <strong>${ausenciasSegunda}</strong>${presentismoImpact(ausenciasSegunda)}</p>
             <div><strong>Detalle de horas y valores:</strong>${renderDetalle(detalleSegunda)}</div>
@@ -1356,6 +1292,7 @@ function calculateQuincenaTotal() {
                     <li><strong>Ausencias:</strong> ${ausenciasMes}</li>
                     <li><strong>Salario base total:</strong> ${formatCurrency(totalMes)}</li>
                     <li><strong>Suma no remunerativa:</strong> ${formatCurrency(sumaNoRemunerativaSegunda)}</li>
+                    ${sumaNoRemunerativaDiferida > 0 ? `<li><strong>Suma no remunerativa diferida a enero 2027:</strong> ${formatCurrency(sumaNoRemunerativaDiferida)}</li>` : ''}
                     <li><strong>Salario total con suma no remunerativa:</strong> ${formatCurrency(totalMes + sumaNoRemunerativaSegunda)}</li>
                 </ul>
                 <ul style="margin:0; padding-left:18px;">
@@ -1468,11 +1405,17 @@ function getDateKey(date) {
 }
 
 // Helper para obtener valor salarial y suma no remunerativa por mes simple
-function getValorHoraBase(category, currentMonthName) {
-    return TABLA_SALARIAL[category]?.[currentMonthName.toLowerCase()];
+function getSalaryMonthKey(date) {
+    return `${MONTH_NAMES[date.getMonth()]}${String(date.getFullYear()).slice(-2)}`;
 }
-function getSumaNoRemunerativa(currentMonthName) {
-    return SUMA_NO_REMUN[currentMonthName] || 0;
+function getValorHoraBase(category, date) {
+    return TABLA_SALARIAL[category]?.[getSalaryMonthKey(date)];
+}
+function getSumaNoRemunerativa(date) {
+    return SUMA_NO_REMUN[getSalaryMonthKey(date)] || 0;
+}
+function getBonificacionAntiguedad(antiguedad_anos, date = new Date()) {
+    return TABLA_ANTIGUEDAD[antiguedad_anos]?.[getSalaryMonthKey(date)] || 0;
 }
 
 // --- UI para marcar/desmarcar feriados desde el calendario ---
@@ -1563,8 +1506,8 @@ function applyMultiDaySchedule() {
         const currentMonthName = MONTH_NAMES[entryTime.getMonth()];
         const dayOfWeek = entryTime.getDay();
         
-        const valorHoraBase = TABLA_SALARIAL[categoria]?.[currentMonthName];
-        const bonificacionPorAntiguedad = getBonificacionAntiguedad(antiguedad);
+        const valorHoraBase = getValorHoraBase(categoria, entryTime);
+        const bonificacionPorAntiguedad = getBonificacionAntiguedad(antiguedad, entryTime);
         
         if (valorHoraBase === undefined) return;
         

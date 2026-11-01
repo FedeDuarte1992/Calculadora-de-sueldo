@@ -1,108 +1,46 @@
-// Test harness for calcularSalarioCalendario
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const vm = require('node:vm');
 
-const valoresAntiguedad = {
-    1:  { "enero25": 25 }
+const context = {
+    document: { addEventListener() {} },
+    console
 };
+vm.createContext(context);
+vm.runInContext(fs.readFileSync('salary-data.js', 'utf8'), context);
+vm.runInContext(fs.readFileSync('script_calendario.js', 'utf8'), context);
 
-function getMonthPrettyName(monthNumber) {
-    const months = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-    return months[monthNumber - 1];
-}
-function getMonthKey(monthNumber, year) {
-    const shortMonth = getMonthPrettyName(monthNumber);
-    const yy = String(year).slice(-2);
-    return `${shortMonth}${yy}`;
-}
+const rates = JSON.parse(JSON.stringify(vm.runInContext(
+    `['A','B','C','D','E','F','G','H'].map(category =>
+        ['julio26','agosto26','septiembre26','octubre26','noviembre26','diciembre26']
+            .map(month => SALARY_TABLES.hourly[category][month]))`,
+    context
+)));
+assert.deepEqual(rates, [
+    [3279, 3328, 3376, 3425, 3489, 3554],
+    [3338, 3388, 3437, 3486, 3552, 3618],
+    [3403, 3454, 3504, 3554, 3621, 3688],
+    [3464, 3515, 3567, 3618, 3686, 3754],
+    [3535, 3587, 3640, 3692, 3762, 3831],
+    [3602, 3655, 3709, 3762, 3833, 3904],
+    [3714, 3769, 3824, 3879, 3952, 4025],
+    [3795, 3851, 3907, 3963, 4038, 4113]
+]);
 
-function calcularSalarioCalendario(datos) {
-    let total = 0;
-    const monthKey = datos.monthKey || getMonthKey(new Date().getMonth() + 1, new Date().getFullYear());
-    const valorAntiguedad = datos.antiguedadAnios ? (valoresAntiguedad[datos.antiguedadAnios] ? (valoresAntiguedad[datos.antiguedadAnios][monthKey] || 0) : 0) : 0;
+const newSeniorityRates = JSON.parse(JSON.stringify(vm.runInContext(
+    `[1,3,5,7,9,12,15,18,22,26,30,35,40].map(years =>
+        [SALARY_TABLES.seniority[years].agosto26, SALARY_TABLES.seniority[years].octubre26])`,
+    context
+)));
+assert.deepEqual(newSeniorityRates, [
+    [32, 33], [46, 48], [63, 66], [85, 89], [102, 107], [135, 142], [164, 172],
+    [191, 200], [221, 231], [250, 262], [273, 286], [300, 315], [328, 343]
+]);
+assert.equal(vm.runInContext('SALARY_TABLES.nonRemunerative.diciembre26', context), 264000);
+assert.equal(vm.runInContext('SALARY_TABLES.deferredNonRemunerative.diciembre26', context), 132000);
 
-    let montoNormales = 0;
-    if (datos.horasNormales > 0) {
-        montoNormales = datos.horasNormales * datos.valorHora;
-        total += montoNormales;
-    }
-
-    let montoNocturnas = 0;
-    if (datos.horasNocturnas > 0) {
-        montoNocturnas = datos.horasNocturnas * (datos.valorHora * 1.3);
-        total += montoNocturnas;
-    }
-
-    const totalHorasBasicas = datos.horasNormales + datos.horasNocturnas;
-    let montoAntiguedad = 0;
-    if (totalHorasBasicas > 0 && valorAntiguedad > 0) {
-        montoAntiguedad = totalHorasBasicas * valorAntiguedad;
-        total += montoAntiguedad;
-    }
-
-    const sumaBase = montoNormales + montoNocturnas;
-    let montoAdicional = 0;
-    if (datos.adicionalPorcentaje > 0 && sumaBase > 0) {
-        montoAdicional = sumaBase * (datos.adicionalPorcentaje / 100);
-        total += montoAdicional;
-    }
-
-    if (datos.horasSabado > 0) {
-        const base = datos.valorHora + valorAntiguedad;
-        const monto = datos.horasSabado * base * 1.2 * 2;
-        total += monto;
-    }
-
-    if (datos.horasNocturnas50 > 0) {
-        const nocturnidad = datos.valorHora * 0.3;
-        const subtotal = datos.valorHora + valorAntiguedad + nocturnidad;
-        const baseFinal = subtotal * 1.2045;
-        const monto = datos.horasNocturnas50 * baseFinal * 1.5;
-        total += monto;
-    }
-
-    if (datos.horasNocturnas100 > 0) {
-        const nocturnidad = datos.valorHora * 0.3;
-        const subtotal = datos.valorHora + valorAntiguedad + nocturnidad;
-        const baseFinal = subtotal * 1.2045;
-        const monto = datos.horasNocturnas100 * baseFinal * 2;
-        total += monto;
-    }
-
-    if (datos.horasFeriado > 0) {
-        const valorHoraFeriado = (datos.valorHora + valorAntiguedad) * 1.2;
-        const montoFeriado = datos.horasFeriado * valorHoraFeriado;
-        total += montoFeriado;
-    }
-
-    if (datos.horas50 > 0) {
-        const monto = datos.horas50 * datos.valorHora * 1.5;
-        total += monto;
-    }
-
-    let montoPresentismo = 0;
-    if (datos.presentismo > 0) {
-        montoPresentismo = total * datos.presentismo;
-        total += montoPresentismo;
-    }
-
-    const totalSinRetenciones = total;
-    const totalACobrar = total * 0.8;
-
-    return {
-        totalSinRetenciones: totalSinRetenciones,
-        totalACobrar: totalACobrar,
-        desglose: {
-            normales: montoNormales,
-            nocturnas: montoNocturnas,
-            antiguedad: montoAntiguedad,
-            adicional: montoAdicional,
-            presentismo: montoPresentismo
-        }
-    };
-}
-
-// Test scenario
-const datosTest = {
-    valorHora: 1000,
+const result = vm.runInContext(`calcularSalarioCalendario({
+    valorHora: 3425,
     horasNormales: 8,
     horasNocturnas: 0,
     horasSabado: 0,
@@ -113,17 +51,40 @@ const datosTest = {
     presentismo: 0.20,
     adicionalPorcentaje: 10,
     antiguedadAnios: 1,
-    monthKey: 'enero25'
+    monthKey: 'octubre26'
+})`, context);
+
+assert.equal(result.totalSinRetenciones, 36484.8);
+assert.ok(Math.abs(result.totalACobrar - 29187.84) < 1e-8);
+assert.equal(result.desglose.antiguedad, 264);
+
+const dailyContext = {
+    document: {
+        addEventListener() {},
+        getElementById() { return {}; }
+    },
+    localStorage: { getItem() { return null; } },
+    console
 };
-
-const res = calcularSalarioCalendario(datosTest);
-console.log('Resultado test:', res);
-
-// Expected totalACobrar: 8640
-if (Math.abs(res.totalACobrar - 8640) < 0.01) {
-    console.log('✅ Test pasado');
-    process.exit(0);
-} else {
-    console.error('❌ Test falló. totalACobrar esperado 8640, obtenido', res.totalACobrar);
-    process.exit(1);
-}
+vm.createContext(dailyContext);
+vm.runInContext(fs.readFileSync('salary-data.js', 'utf8'), dailyContext);
+vm.runInContext(fs.readFileSync('script.js', 'utf8'), dailyContext);
+assert.equal(vm.runInContext("getValorHoraBase('A', new Date(2026, 9, 15))", dailyContext), 3425);
+assert.equal(vm.runInContext("getBonificacionAntiguedad(1, new Date(2026, 9, 15))", dailyContext), 33);
+assert.equal(vm.runInContext("getSumaNoRemunerativa(new Date(2026, 11, 15))", dailyContext), 264000);
+const noPresentismo = vm.runInContext(`calcularSalarioCalendario({
+    valorHora: 1000,
+    horasNormales: 8,
+    horasNocturnas: 0,
+    horasSabado: 0,
+    horasNocturnas50: 0,
+    horasNocturnas100: 0,
+    horasFeriado: 0,
+    horas50: 0,
+    presentismo: 0,
+    adicionalPorcentaje: 0,
+    antiguedadAnios: 0,
+    monthKey: 'enero25'
+})`, context);
+assert.equal(noPresentismo.totalSinRetenciones, 8000);
+console.log('✅ Pruebas de tabla salarial y cálculo real del calendario aprobadas');

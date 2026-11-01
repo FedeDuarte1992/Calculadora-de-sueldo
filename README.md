@@ -37,11 +37,14 @@ Un sistema web completo para calcular salarios basado en diferentes modalidades 
 Calcular sueldo/
 ├── index.html              # Página principal
 ├── calculo_hora.html        # Cálculo por horas
-├── calcular_dia.html        # Cálculo por día
+├── calcular_dia.html        # Control de asistencia y cálculo por día
 ├── calculadora_adicional.html # Calculadora de adicional
+├── calcular_calendario.html  # Cálculo por calendario
 ├── style.css               # Estilos principales
 ├── script.js               # Script principal (cálculo por día)
 ├── script_hora.js          # Script para cálculo por horas
+├── script_calendario.js    # Script para cálculo por calendario
+├── salary-data.js          # Tablas salariales y adicionales compartidas
 ├── utils.js                # Utilidades comunes
 └── README.md               # Este archivo
 ```
@@ -96,16 +99,18 @@ Calcular sueldo/
 ## 🔧 Configuración
 
 ### Valores Salariales
-Los valores están configurados en `script_hora.js` y `script.js`:
-- Tabla salarial por categoría y mes
-- Valores de antigüedad
-- Suma no remunerativa
+Los valores salariales se mantienen centralizados en `salary-data.js` y son compartidos por las calculadoras:
+- Valor hora por categoría, de enero de 2025 a diciembre de 2026
+- Bonificación por antigüedad y suma no remunerativa por mes
+- En diciembre de 2026, los $132.000 diferidos se muestran aparte porque pueden abonarse durante los primeros cinco días hábiles de enero de 2027
 
 ### Personalización
 Para modificar valores:
-1. Edita las constantes en los archivos JavaScript
+1. Edita las tablas en `salary-data.js`
 2. Actualiza las tablas según el convenio vigente
 3. Los cambios se aplicarán automáticamente
+
+Las pruebas de tabla y cálculo del calendario se ejecutan con `node test_calendario.js`.
 
 ## 📱 Compatibilidad
 
